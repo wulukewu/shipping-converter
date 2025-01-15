@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 # Configure upload folder and allowed file types
 UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
+ALLOWED_EXTENSIONS = {'xlsx', 'xls', 'xlsm'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Limit file size to 16MB
 
@@ -48,7 +48,12 @@ def upload_file_unictron():
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
             file.save(filepath)
 
-            Unictron.organize_data(filepath)
+            if filename.lower().endswith('.xls'):
+                xlsx_filename = os.path.splitext(filepath)[0] + '.xlsx'
+                if Unictron.convert_xls_to_xlsx(filepath, xlsx_filename):
+                    Unictron.organize_data(xlsx_filename)
+            else:
+                Unictron.organize_data(filepath)
 
             base_name, extension = os.path.splitext(filename)
             processed_filename = f"{base_name} (processed){extension}"

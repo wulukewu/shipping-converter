@@ -1,6 +1,35 @@
 import openpyxl
 from openpyxl.utils import get_column_letter
+import xlrd
 import os
+
+def convert_xls_to_xlsx(xls_filename, xlsx_filename):
+    """
+    Converts an XLS file to XLSX format.
+    Args:
+        xls_filename (str): The path to the XLS file.
+        xlsx_filename (str): The path where the XLSX file will be saved.
+    """
+    try:
+        workbook = xlrd.open_workbook(xls_filename)
+        wb = openpyxl.Workbook()
+        for sheet_name in workbook.sheet_names():
+            sheet = workbook.sheet_by_name(sheet_name)
+            new_sheet = wb.create_sheet(title=sheet_name)
+            for row in range(sheet.nrows):
+                for col in range(sheet.ncols):
+                    cell_value = sheet.cell_value(row, col)
+                    new_sheet.cell(row=row + 1, column=col + 1, value=cell_value)
+        # Remove the default sheet if it's still present
+        if "Sheet" in wb.sheetnames:
+          default_sheet = wb["Sheet"]
+          wb.remove(default_sheet)
+        wb.save(xlsx_filename)
+        print(f"Successfully converted '{xls_filename}' to '{xlsx_filename}'")
+    except Exception as e:
+        print(f"Error converting XLS to XLSX: {e}")
+        return False
+    return True
 
 def organize_data(filename):
     """
