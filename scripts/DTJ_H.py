@@ -221,12 +221,3 @@ def organize_data_hm(filename):
         print(f"Error: File not found at '{filename}'.")
     except Exception as e:
         print(f"An error occurred: {e}")
-
-# if __name__ == "__main__":
-#     xls_file_path = "159774.xls"
-#     xlsx_file_path = os.path.join("uploads","159774.xlsx")
-
-#     # 1. Convert XLS to XLSX
-#     if convert_xls_to_xlsx(xls_file_path, xlsx_file_path):
-#     # 2. Process the converted XLSX file
-#         organize_data_hm(xlsx_file_path)
