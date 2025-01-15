@@ -132,7 +132,9 @@ def organize_data_hm(filename):
                 org_sheet.cell(row=j, column=2).value = kinds_combined
                 if 'kinds' in locals() and isinstance(kinds, list) and len(kinds) > 0:
                   #case 2-1
-                     org_sheet.cell(row=j, column=1).value = f"{desc} ({sub_kind_count}pcs/set)"
+                     desc_parts = re.split(r"free sample", desc, flags=re.IGNORECASE)
+                     org_sheet.cell(row=j, column=1).value = f"{desc_parts[0].strip()} ({sub_kind_count}pcs/set)\nfree sample"
+                     org_sheet.cell(row=j, column=1).alignment = openpyxl.styles.Alignment(wrap_text=True)
                      org_sheet.cell(row=j, column=4).value = "SET"
                 else:
                    #case 2-2
