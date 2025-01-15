@@ -1,14 +1,16 @@
 import os
 from flask import Flask, render_template, request, send_from_directory, redirect, url_for
 from werkzeug.utils import secure_filename
-import main  # Import your existing script
-from urllib.parse import unquote # Import unquote
+from urllib.parse import unquote
+
+import scripts.Unictron as Unictron
+import scripts.DTJ_H as DTJ_H
 
 app = Flask(__name__)
 
 # Configure upload folder and allowed file types
 UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'xlsx'}
+ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Limit file size to 16MB
 
@@ -22,40 +24,77 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route('/', methods=['GET', 'POST'])
-def upload_file():
-    """Handles file upload and processing."""
+@app.route('/')
+def index():
+    """Renders the index page."""
+    return render_template('index.html')
+
+
+@app.route('/Unictron', methods=['GET', 'POST'])
+def upload_file_unictron():
+    """Handles file upload and processing for Unictron."""
     if request.method == 'POST':
-        # Check if the post request has the file part
         if 'file' not in request.files:
             return redirect(request.url)
 
         file = request.files['file']
 
-        # If the user does not select a file, the browser submits an empty file without a filename
         if file.filename == '':
             return redirect(request.url)
 
         if file and allowed_file(file.filename):
-            filename = unquote(file.filename) # Unquote the filename
-            safe_filename = secure_filename(filename) # Use secure_filename
+            filename = unquote(file.filename)
+            safe_filename = secure_filename(filename)
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
             file.save(filepath)
 
-            # Process the file using your main.py script
-            main.organize_data(filepath)
+            Unictron.organize_data(filepath)
 
-            # --- Modify output filename here ---
             base_name, extension = os.path.splitext(filename)
             processed_filename = f"{base_name} (processed){extension}"
             processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
 
-            # Rename the output file from main.py
             os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
 
             return redirect(url_for('download_file', name=processed_filename))
 
-    return render_template('index.html')
+    return render_template('Unictron.html')
+
+
+@app.route('/DTJ_H', methods=['GET', 'POST'])
+def upload_file_dtj_h():
+    """Handles file upload and processing for DTJ_H."""
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return redirect(request.url)
+
+        file = request.files['file']
+
+        if file.filename == '':
+            return redirect(request.url)
+
+        if file and allowed_file(file.filename):
+            filename = unquote(file.filename)
+            safe_filename = secure_filename(filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
+            file.save(filepath)
+
+            if filename.lower().endswith('.xls'):
+                xlsx_filename = os.path.splitext(filepath)[0] + '.xlsx'
+                if DTJ_H.convert_xls_to_xlsx(filepath, xlsx_filename):
+                    DTJ_H.organize_data_hm(xlsx_filename)
+            else:
+                DTJ_H.organize_data_hm(filepath)
+
+            base_name, extension = os.path.splitext(filename)
+            processed_filename = f"{base_name} (processed).xlsx"
+            processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
+
+            os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
+
+            return redirect(url_for('download_file', name=processed_filename))
+
+    return render_template('DTJ_H.html')
 
 
 @app.route('/uploads/<name>')
