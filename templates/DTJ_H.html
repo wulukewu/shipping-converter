@@ -2,12 +2,25 @@
 <html>
 <head>
     <title>DTJ_H</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        function enableSubmitButton() {
+            const fileInput = document.getElementById('file-upload');
+            const submitButton = document.getElementById('submit-button');
+            submitButton.disabled = !fileInput.value;
+        }
+    </script>
 </head>
 <body>
-    <h1>Upload XLSX File</h1>
-    <form method="POST" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".xls">
-        <button type="submit">Process File</button>
-    </form>
+    <section>
+        <h1>DTJ 宏美</h1>
+        <form method="POST" enctype="multipart/form-data">
+            <label for="file-upload" class="custom-file-upload">
+                Choose File
+            </label>
+            <input id="file-upload" type="file" name="file" accept=".xls" onchange="enableSubmitButton()">
+            <button id="submit-button" type="submit" disabled>Process File</button>
+        </form>
+    </section>
 </body>
 </html>
