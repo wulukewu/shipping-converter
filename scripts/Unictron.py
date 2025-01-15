@@ -90,11 +90,11 @@ def organize_data(filename):
         i = 1  # Initialize i for the main sheet row index
         
         while i <= last_row:
-            item_des = main_sheet.cell(row=i+1, column=2).value # Get the next Item Description before checking part no or po no
             if main_sheet.cell(row=i, column=2).value == "PART NO:":
                 # Case 1: "PART NO:" found
                 part_info = f"{main_sheet.cell(row=i, column=2).value} {main_sheet.cell(row=i, column=3).value}\n{main_sheet.cell(row=i + 1, column=2).value}"
                 organized_sheet.cell(row=j, column=1).value = part_info
+                item_des = main_sheet.cell(row=i+1, column=2).value # Get the next Item Description before checking part no or po no
                 i += 2
                 j += 1
             elif main_sheet.cell(row=i, column=2).value == "P.O.NO: ":
