@@ -34,8 +34,16 @@ jobs:
       run: |
         docker save shipping-converter -o shipping-converter.tar
 
-    - name: Upload Docker image tar file
-      uses: actions/upload-artifact@v3
-      with:
-        name: shipping-converter-tar
-        path: shipping-converter.tar
+    - name: Install GitHub CLI
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gh
+
+    - name: Create GitHub Release
+      id: create_release
+      run: |
+        gh release create "v${{ github.run_number }}" shipping-converter.tar -t "Release ${{ github.run_number }}" -n "Automated release for build ${{ github.run_number }}"
+
+    - name: Upload Docker image tar file to release
+      run: |
+        gh release upload "v${{ github.run_number }}" shipping-converter.tar
