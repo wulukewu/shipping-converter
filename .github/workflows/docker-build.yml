@@ -40,14 +40,20 @@ jobs:
         sudo apt-get install -y gh
 
     - name: Authenticate GitHub CLI
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
 
     - name: Create GitHub Release
       id: create_release
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release create "v${{ github.run_number }}" shipping-converter.tar -t "Release ${{ github.run_number }}" -n "Automated release for build ${{ github.run_number }}"
+        gh release create "v${{ github.run_number }}" shipping-converter.tar -t "Release ${{ github.run_number }}" -n "Automated release for build ${{ github.run_number }}" --repo ${{ github.repository }}
 
     - name: Upload Docker image tar file to release
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release upload "v${{ github.run_number }}" shipping-converter.tar
+        gh release upload "v${{ github.run_number }}" shipping-converter.tar --repo ${{ github.repository }}
