@@ -1,0 +1,13 @@
+# Changelog
+
+## 1.0.0 (2025-01-16)
+
+
+### Features
+
+* add styles to html ([eca5db0](https://github.com/wulukewu/shipping-converter/commit/eca5db057642e15fdf168399520eae61b1adfc2a))
+* add two type of process on the web ([3c043fc](https://github.com/wulukewu/shipping-converter/commit/3c043fc82cada6fdd2a92670b267385816110de7))
+* add web icon ([8f6d28f](https://github.com/wulukewu/shipping-converter/commit/8f6d28f555caedcb5537b475f4e776a20397c9b6))
+* add xls convert to xlsx to Unictron ([3baf7ae](https://github.com/wulukewu/shipping-converter/commit/3baf7aef906b89c01f47c74d80d5daae62d3b618))
+* Compose to docker ([c71be8c](https://github.com/wulukewu/shipping-converter/commit/c71be8cc96633140b5360234894878eb85db71d1))
+* GitHub Actions Docker Build ([97dcc5f](https://github.com/wulukewu/shipping-converter/commit/97dcc5fe7a3198b904d134d479972030ef098ece))
