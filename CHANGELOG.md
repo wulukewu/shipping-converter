@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/wulukewu/shipping-converter/compare/v1.3.0...v1.4.0) (2025-01-16)
+
+
+### Features
+
+* make navbar icon clickable to home page ([0c6c10a](https://github.com/wulukewu/shipping-converter/commit/0c6c10a043e696aa27a2167b969b57a580de0ff2))
+
 ## [1.3.0](https://github.com/wulukewu/shipping-converter/compare/v1.2.0...v1.3.0) (2025-01-16)
 
 
