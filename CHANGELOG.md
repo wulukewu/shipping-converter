@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/wulukewu/shipping-converter/compare/v1.4.0...v1.5.0) (2025-01-16)
+
+
+### Features
+
+* add YONG_LAING converter ([017786a](https://github.com/wulukewu/shipping-converter/commit/017786aa2df80d539ef726ac8295fefaed2958e3))
+
 ## [1.4.0](https://github.com/wulukewu/shipping-converter/compare/v1.3.0...v1.4.0) (2025-01-16)
 
 
