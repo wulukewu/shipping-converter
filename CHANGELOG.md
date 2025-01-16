@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/wulukewu/shipping-converter/compare/v1.1.0...v1.2.0) (2025-01-16)
+
+
+### Features
+
+* add to docker hub ([8b1b4b3](https://github.com/wulukewu/shipping-converter/commit/8b1b4b33c41df3f09675656ba97815f02875ea89))
+
 ## [1.1.0](https://github.com/wulukewu/shipping-converter/compare/v1.0.0...v1.1.0) (2025-01-16)
 
 
