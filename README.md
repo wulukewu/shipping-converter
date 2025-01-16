@@ -43,6 +43,13 @@ To build and run the Docker container, use the following commands:
     docker run -d -p 5000:5000 --name shipping-converter shipping-converter
     ```
 
+### Pull Docker Image
+
+To pull the Docker image from GitHub Hub, use the following command:
+```sh
+docker pull wulukewu/shipping-converter:latest
+```
+
 ### GitHub Actions
 
 This project uses GitHub Actions to automate the release process and Docker image publishing.
@@ -63,7 +70,6 @@ Contributions are welcome! Please open an issue or submit a pull request for any
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
-```
 
 ### Explanation:
 1. **Getting Started**: Added sections for prerequisites, installation, and running the application.
@@ -71,13 +77,3 @@ This project is licensed under the MIT License. See the LICENSE file for details
 3. **GitHub Actions**: Added a section to explain the GitHub Actions workflows used in the project.
 4. **Contributing**: Added a section to encourage contributions.
 5. **License**: Added a section for the license information.
-
-This should make the `README.md` file more informative and easier to follow.
-### Explanation:
-1. **Getting Started**: Added sections for prerequisites, installation, and running the application.
-2. **Build and Run Docker**: Provided clear steps to build and run the Docker container.
-3. **GitHub Actions**: Added a section to explain the GitHub Actions workflows used in the project.
-4. **Contributing**: Added a section to encourage contributions.
-5. **License**: Added a section for the license information.
-
-This should make the `README.md` file more informative and easier to follow.
