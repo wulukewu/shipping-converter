@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/wulukewu/shipping-converter/compare/v1.2.0...v1.3.0) (2025-01-16)
+
+
+### Features
+
+* add navbar to the pages ([4fc8942](https://github.com/wulukewu/shipping-converter/commit/4fc89428266996ea76c400b51f79456c3ea76d2f))
+
 ## [1.2.0](https://github.com/wulukewu/shipping-converter/compare/v1.1.0...v1.2.0) (2025-01-16)
 
 
