@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  build:
+  docker-build:
     runs-on: ubuntu-latest
 
     steps:
@@ -35,7 +35,7 @@ jobs:
         docker save shipping-converter -o shipping-converter.tar
 
     - name: Upload Docker image tar file
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: shipping-converter-tar
         path: shipping-converter.tar
