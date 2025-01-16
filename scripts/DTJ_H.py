@@ -32,7 +32,7 @@ def convert_xls_to_xlsx(xls_filename, xlsx_filename):
         return False
     return True
 
-def organize_data_hm(filename):
+def organize_data(filename):
     """
     Organizes data from 'HM' sheet in an Excel file and writes the organized data to a new Excel file.
     Args:

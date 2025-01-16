@@ -5,6 +5,7 @@ from urllib.parse import unquote
 
 import scripts.Unictron as Unictron
 import scripts.DTJ_H as DTJ_H
+import scripts.YONG_LAING as YONG_LAING
 
 app = Flask(__name__)
 
@@ -87,9 +88,9 @@ def upload_file_dtj_h():
             if filename.lower().endswith('.xls'):
                 xlsx_filename = os.path.splitext(filepath)[0] + '.xlsx'
                 if DTJ_H.convert_xls_to_xlsx(filepath, xlsx_filename):
-                    DTJ_H.organize_data_hm(xlsx_filename)
+                    DTJ_H.organize_data(xlsx_filename)
             else:
-                DTJ_H.organize_data_hm(filepath)
+                DTJ_H.organize_data(filepath)
 
             base_name, extension = os.path.splitext(filename)
             processed_filename = f"{base_name} (processed).xlsx"
@@ -100,6 +101,42 @@ def upload_file_dtj_h():
             return redirect(url_for('download_file', name=processed_filename))
 
     return render_template('DTJ_H.html')
+
+
+@app.route('/YONG_LAING', methods=['GET', 'POST'])
+def upload_file_yong_laing():
+    """Handles file upload and processing for YONG_LAING."""
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return redirect(request.url)
+
+        file = request.files['file']
+
+        if file.filename == '':
+            return redirect(request.url)
+
+        if file and allowed_file(file.filename):
+            filename = unquote(file.filename)
+            safe_filename = secure_filename(filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
+            file.save(filepath)
+
+            if filename.lower().endswith('.xls'):
+                xlsx_filename = os.path.splitext(filepath)[0] + '.xlsx'
+                if YONG_LAING.convert_xls_to_xlsx(filepath, xlsx_filename):
+                    YONG_LAING.organize_data(xlsx_filename)
+            else:
+                YONG_LAING.organize_data(filepath)
+
+            base_name, extension = os.path.splitext(filename)
+            processed_filename = f"{base_name} (processed){extension}"
+            processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
+
+            os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
+
+            return redirect(url_for('download_file', name=processed_filename))
+
+    return render_template('YONG_LAING.html')
 
 
 @app.route('/uploads/<name>')
