@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/wulukewu/shipping-converter/compare/v1.0.0...v1.1.0) (2025-01-16)
+
+
+### Features
+
+* chinese added to html ([ba83315](https://github.com/wulukewu/shipping-converter/commit/ba83315ebda09e76d896381506336ef1464de6fe))
+
 ## 1.0.0 (2025-01-16)
 
 
