@@ -41,6 +41,14 @@ body {
     color: #ffcc00;
 }
 
+.navbar a.bug_exist {
+    color: #d2d2d2;
+}
+
+.navbar a:hover.bug_exist {
+    color: #ff3333;
+}
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -109,9 +117,19 @@ button:focus {
     outline: none;
 }
 
-button:disabled {
+button:disabled,
+button.bug_exist:disabled,
+button.bug_exist:disabled:hover {
     background-color: #ccc;
     cursor: not-allowed;
+}
+
+button.bug_exist {
+    background-color: #ff6666;
+}
+
+button:hover.bug_exist {
+    background-color: #ff3333;
 }
 
 .container {
