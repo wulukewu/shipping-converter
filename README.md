@@ -1,6 +1,8 @@
 # ShippingConverter
 
-![Shipping Converter Icon](static/shipping-converter-tool-icon.png)
+<p align="center">
+  <img src="static/shipping-converter-tool-icon.png" alt="Shipping Converter Icon">
+</p>
 
 ShippingConverter is a tool for converting shipping data. This project includes a Flask web application and Docker support.
 
