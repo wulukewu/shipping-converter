@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.0](https://github.com/wulukewu/shipping-converter/compare/v1.9.0...v1.10.0) (2025-01-17)
+
+
+### Features
+
+* update styles.css ([de91fbe](https://github.com/wulukewu/shipping-converter/commit/de91fbee2af4b130654d19352ba19ec3fe54831a))
+
 ## [1.9.0](https://github.com/wulukewu/shipping-converter/compare/v1.8.0...v1.9.0) (2025-01-17)
 
 
