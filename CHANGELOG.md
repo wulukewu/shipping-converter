@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.0](https://github.com/wulukewu/shipping-converter/compare/v1.8.0...v1.9.0) (2025-01-17)
+
+
+### Features
+
+* add bug_exist class to remind user ([7a53fcb](https://github.com/wulukewu/shipping-converter/commit/7a53fcb25ee263f07de221c62db23ba030b8b59f))
+
 ## [1.8.0](https://github.com/wulukewu/shipping-converter/compare/v1.7.0...v1.8.0) (2025-01-17)
 
 
