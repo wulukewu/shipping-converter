@@ -17,7 +17,7 @@ ShippingConverter is a tool for converting shipping data. This project includes 
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/yourusername/shipping-converter.git
+    git clone https://github.com/wulukewu/shipping-converter.git
     cd shipping-converter
     ```
 
