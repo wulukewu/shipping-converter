@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/wulukewu/shipping-converter/compare/v1.5.0...v1.6.0) (2025-01-17)
+
+
+### Features
+
+* add VLI converter ([c4a4505](https://github.com/wulukewu/shipping-converter/commit/c4a4505e680339e52bb16015168f732d2fcb2276))
+
 ## [1.5.0](https://github.com/wulukewu/shipping-converter/compare/v1.4.0...v1.5.0) (2025-01-16)
 
 
