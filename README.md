@@ -54,6 +54,25 @@ To pull the Docker image from GitHub Hub, use the following command:
 docker pull wulukewu/shipping-converter:latest
 ```
 
+### Docker Compose
+
+To use Docker Compose, create a `compose.yaml` file with the following content:
+
+```yaml
+version: '3.8'
+
+services:
+  shipping-converter:
+    image: wulukewu/shipping-converter:latest
+    container_name: shipping-converter
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_APP=app.py
+    volumes:
+      - ./uploads:/app/uploads
+```
+
 ### GitHub Actions
 
 This project uses GitHub Actions to automate the release process and Docker image publishing.
