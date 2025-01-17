@@ -121,3 +121,10 @@ button:disabled {
 .container button {
     margin: 10px;
 }
+
+.big-icon {
+    width: 50%;
+    height: auto;
+    margin-bottom: 20px;
+    animation: spin 40s linear infinite;
+}
