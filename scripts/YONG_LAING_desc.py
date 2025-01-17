@@ -7,12 +7,12 @@ def read_xlsx_and_output_txt(xlsx_path, txt_path):
 
     # Open the text file for writing
     with open(txt_path, 'w', encoding='utf-8') as txt_file:
-        content = f'其他申報事項:\nInvoice No.{"*"*20}'
+        content = f'Invoice No.{"*"*20}'
         txt_file.write(content + '\n')
 
         i = 1
-        date = ''
-        num = ''
+        date = None
+        num = None
 
         while i <= sheet.max_row:
             i += 1

@@ -96,11 +96,12 @@ def organize_data(filename):
                 organized_sheet.cell(row=j, column=2, value=desc)
                 organized_sheet.cell(row=j, column=3, value=f'PARTS  NO.{parts}')
                 organized_sheet.cell(row=j, column=4, value=wo)
-                organized_sheet.cell(row=j, column=5, value=brand)
-                organized_sheet.cell(row=j, column=6, value=qty)
+                organized_sheet.cell(row=j, column=5, value=qty)
+                organized_sheet.cell(row=j, column=6, value='PCS')
                 organized_sheet.cell(row=j, column=7, value=unit_price)
-                organized_sheet.cell(row=j, column=8, value='8523.51.00.00-0')
-                organized_sheet.cell(row=j, column=9, value='06')
+                organized_sheet.cell(row=j, column=8, value=brand)
+                organized_sheet.cell(row=j, column=9, value='8523.51.00.00-0')
+                organized_sheet.cell(row=j, column=10, value='06')
             
             else:
                 # Case 2: Made In China
@@ -111,13 +112,14 @@ def organize_data(filename):
 
                 organized_sheet.cell(row=j, column=2, value=desc)
                 organized_sheet.cell(row=j, column=3, value=f'PARTS  NO.{parts}')
-                organized_sheet.cell(row=j, column=5, value='NO BRAND')
-                organized_sheet.cell(row=j, column=6, value=qty)
+                organized_sheet.cell(row=j, column=5, value=qty)
+                organized_sheet.cell(row=j, column=6, value='PCS')
                 organized_sheet.cell(row=j, column=7, value=unit_price)
-                organized_sheet.cell(row=j, column=8, value='8523.51.00.00-0')
-                organized_sheet.cell(row=j, column=9, value='82')
+                organized_sheet.cell(row=j, column=8, value='NO BRAND')
+                organized_sheet.cell(row=j, column=9, value='8523.51.00.00-0')
+                organized_sheet.cell(row=j, column=10, value='82')
 
-            qty_cell = organized_sheet.cell(row=j, column=6, value=qty)
+            qty_cell = organized_sheet.cell(row=j, column=5, value=qty)
             if isinstance(qty, (int, float)):
                 qty_cell.number_format = '#,##0'
             

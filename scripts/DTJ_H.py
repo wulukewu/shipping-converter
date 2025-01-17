@@ -75,6 +75,8 @@ def organize_data(filename):
             return
         # Initialize j for the organized sheet row
         j = 1
+        # Initialize kinds list
+        kinds = []
         # Initialize the minUnitprice to a very high number
         min_unit_price = float('inf')
         # Skip the first row from start
@@ -98,7 +100,7 @@ def organize_data(filename):
                 if min_unit_price == float('inf'):
                     min_unit_price = 0
                 sub_kind_count = 0
-                if 'kinds' in locals() and isinstance(kinds, list) and len(kinds) > 0:
+                if len(kinds) > 1:
                   #Case 2-1 when kinds has more than 1 element
                   for k in range(len(kinds)):
                     # Check for "xN" multiplier in sub-kind
@@ -114,7 +116,7 @@ def organize_data(filename):
                     kinds_combined += f"({sub_kind_without_multiplier})-{qty}PCS" + (f"x{multiplier}" if multiplier > 1 else "") + "\n"
                 else:
                  #Case 2-2 when kinds has only 1 element
-                    if 'kinds' in locals() and isinstance(kinds, list) and len(kinds) > 0:
+                    if len(kinds) > 0:
                       for k in range(len(kinds)):
                        # Check for "xN" multiplier in sub-kind
                         sub_kind_without_multiplier = kinds[k]
@@ -127,13 +129,13 @@ def organize_data(filename):
                               sub_kind_without_multiplier = kinds[k]
                         sub_kind_count += multiplier
                         kinds_combined = f"({sub_kind_without_multiplier})"
-                if len(kinds_combined) > 2 and 'kinds' in locals() and isinstance(kinds, list) and len(kinds) > 0 :
+                if len(kinds_combined) > 2 and len(kinds) > 1 :
                     kinds_combined = kinds_combined[:-1]
                 org_sheet.cell(row=j, column=2).value = kinds_combined
-                if 'kinds' in locals() and isinstance(kinds, list) and len(kinds) > 0:
+                if len(kinds) > 1:
                   #case 2-1
                      desc_parts = re.split(r"free sample", desc, flags=re.IGNORECASE)
-                     org_sheet.cell(row=j, column=1).value = f"{desc_parts[0].strip()} ({sub_kind_count}pcs/set)\nfree sample"
+                     org_sheet.cell(row=j, column=1).value = f"{desc_parts[0].strip()} ({len(kinds)}pcs/set)\nfree sample"
                      org_sheet.cell(row=j, column=1).alignment = openpyxl.styles.Alignment(wrap_text=True)
                      org_sheet.cell(row=j, column=4).value = "SET"
                 else:
@@ -149,8 +151,7 @@ def organize_data(filename):
                 org_sheet.cell(row=j, column=9).number_format = "@"
                 org_sheet.cell(row=j, column=9).value = "49119900002"
                 # Clear kinds array
-                if 'kinds' in locals():
-                    del kinds
+                kinds = []
                 min_unit_price = float('inf')
             else:
                 # Case 1 - pcs
@@ -165,7 +166,6 @@ def organize_data(filename):
                 sub_kinds_combined = ""
                 qty_string = f"{qty:,}PCS"
                 sub_kind_count = 0
-                kinds = [] # Initialize kinds list
                 for sub_k in sub_kinds:
                     # Check for "xN" multiplier in sub-kind
                     sub_kind_without_multiplier = sub_k.strip()
