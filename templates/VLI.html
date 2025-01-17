@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Shipping Converter - 詠業</title>
+    <title>Shipping Converter - VLI</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='shipping-converter-tool-icon.png') }}">
     <script>
@@ -24,12 +24,12 @@
         <a href="/VLI">威鋒</a>
     </div>
     <section>
-        <h1>詠業</h1>
+        <h1>威鋒</h1>
         <form method="POST" enctype="multipart/form-data">
             <label for="file-upload" class="custom-file-upload">
                 上傳文件
             </label>
-            <input id="file-upload" type="file" name="file" accept=".xls, .xlsx, .xlsm" onchange="enableSubmitButton()">
+            <input id="file-upload" type="file" name="file" accept=".doc, .docx" onchange="enableSubmitButton()">
             <button id="submit-button" type="submit" disabled>處理文件</button>
         </form>
     </section>

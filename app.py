@@ -6,12 +6,13 @@ from urllib.parse import unquote
 import scripts.Unictron as Unictron
 import scripts.DTJ_H as DTJ_H
 import scripts.YONG_LAING as YONG_LAING
+import scripts.VLI as VLI
 
 app = Flask(__name__)
 
 # Configure upload folder and allowed file types
 UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'xlsx', 'xls', 'xlsm'}
+ALLOWED_EXTENSIONS = {'xlsx', 'xls', 'xlsm', 'doc', 'docx'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Limit file size to 16MB
 
@@ -138,6 +139,39 @@ def upload_file_yong_laing():
 
     return render_template('YONG_LAING.html')
 
+@app.route('/VLI', methods=['GET', 'POST'])
+def upload_file_vli():
+    """Handles file upload and processing for VLI."""
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return redirect(request.url)
+
+        file = request.files['file']
+
+        if file.filename == '':
+            return redirect(request.url)
+
+        if file and allowed_file(file.filename):
+            filename = unquote(file.filename)
+            safe_filename = secure_filename(filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
+            file.save(filepath)
+
+            content = VLI.read_doc_file(filepath)
+            extracted_filename = os.path.splitext(filepath)[0] + '.xlsx'
+            data = VLI.extract_table_content(content)
+            VLI.save_to_excel(data, extracted_filename)
+            VLI.organize_data(extracted_filename)
+
+            base_name, _ = os.path.splitext(filename)
+            processed_filename = f"{base_name} (processed).xlsx"
+            processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
+
+            os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
+
+            return redirect(url_for('download_file', name=processed_filename))
+
+    return render_template('VLI.html')
 
 @app.route('/uploads/<name>')
 def download_file(name):
