@@ -41,12 +41,12 @@ body {
     color: #ffcc00;
 }
 
-.navbar a#bug_exist {
-    color: #d2d2d2;
+.navbar a#bug-exist {
+    color: #ff3333;
 }
 
-.navbar a:hover#bug_exist {
-    color: #ff3333;
+.navbar a:hover#bug-exist {
+    color: #ff0000;
 }
 
 @keyframes spin {
@@ -81,7 +81,7 @@ input[type="file"] {
 }
 
 .custom-file-upload {
-    background-color: #007BFF;
+    background-color: #ff3333;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -92,7 +92,7 @@ input[type="file"] {
 }
 
 .custom-file-upload:hover {
-    background-color: #0056b3;
+    background-color: #ff0000;
 }
 
 .custom-file-upload:focus {
@@ -118,18 +118,18 @@ button:focus {
 }
 
 button:disabled,
-button#bug_exist:disabled,
-button#bug_exist:disabled:hover {
+button#bug-exist:disabled,
+button#bug-exist:disabled:hover {
     background-color: #ccc;
     cursor: not-allowed;
 }
 
-button#bug_exist {
-    background-color: #ff6666;
+button#bug-exist {
+    background-color: #ff3333;
 }
 
-button:hover#bug_exist {
-    background-color: #ff3333;
+button:hover#bug-exist {
+    background-color: #ff0000;
 }
 
 .container {
