@@ -73,6 +73,8 @@ def organize_data(filename):
                 elif desc == 'Made In China':
                     case_2 = True
                     continue
+                elif desc == 'TOTAL: ':
+                    break
                 elif not desc:
                     continue
             elif po_number == 'PO Number ':
