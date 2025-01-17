@@ -5,6 +5,13 @@
 
 ### Features
 
+* added YONG_LAING_desc converter ([c232b77](https://github.com/wulukewu/shipping-converter/commit/c232b77bc1c93ebd3b9a1918e7d053da63c80539))
+
+## [1.7.0](https://github.com/wulukewu/shipping-converter/compare/v1.6.0...v1.7.0) (2025-01-17)
+
+
+### Features
+
 * added YONG_LAING_desc converter ([cbcc730](https://github.com/wulukewu/shipping-converter/commit/cbcc730baae6beb59386df6a74d2e91c6923172d))
 
 ## [1.6.0](https://github.com/wulukewu/shipping-converter/compare/v1.5.0...v1.6.0) (2025-01-17)
