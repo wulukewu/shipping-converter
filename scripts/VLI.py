@@ -1,138 +1,80 @@
 import openpyxl
 from openpyxl.utils import get_column_letter
-import pandas as pd
-import textract
-import re
+import xlrd
 import os
 
-def read_doc_file(doc_path):
+def convert_xls_to_xlsx(xls_filename, xlsx_filename):
     """
-    Reads the content of a .doc file.
+    Converts an XLS file to XLSX format.
     Args:
-        doc_path (str): The path to the .doc file.
-    Returns:
-        str: The extracted text content.
+        xls_filename (str): The path to the XLS file.
+        xlsx_filename (str): The path where the XLSX file will be saved.
     """
     try:
-        text = textract.process(doc_path)
-        return text.decode('utf-8')
+        workbook = xlrd.open_workbook(xls_filename)
+        wb = openpyxl.Workbook()
+        for sheet_name in workbook.sheet_names():
+            sheet = workbook.sheet_by_name(sheet_name)
+            new_sheet = wb.create_sheet(title=sheet_name)
+            for row in range(sheet.nrows):
+                for col in range(sheet.ncols):
+                    cell_value = sheet.cell_value(row, col)
+                    new_sheet.cell(row=row + 1, column=col + 1, value=cell_value)
+        # Remove the default sheet if it's still present
+        if "Sheet" in wb.sheetnames:
+            default_sheet = wb["Sheet"]
+            wb.remove(default_sheet)
+        wb.save(xlsx_filename)
+        print(f"Successfully converted '{xls_filename}' to '{xlsx_filename}'")
     except Exception as e:
-        print(f"Error reading .doc file: {e}")
-        return ""
-
-def extract_table_content(content):
-    """
-    Extracts the table content from the text.
-    Args:
-        content (str): The text content.
-    Returns:
-        str: The extracted table content.
-    """
-    try:
-        start_marker = "VLI CHIPSET(IC)"
-        end_marker = "Total"
-        
-        start_pos = content.find(start_marker)
-        end_pos = content.find(end_marker, start_pos)
-        
-        if start_pos == -1 or end_pos == -1:
-            print("Markers not found in the content.")
-            return ""
-        
-        table_content = content[start_pos + len(start_marker):end_pos].strip()
-        
-        lines = table_content.split('\n')
-        filtered_lines = [line for line in lines if '-' * 10 not in line]
-        
-        return '\n'.join(filtered_lines)
-    except Exception as e:
-        print(f"Error extracting table content: {e}")
-        return ""
-
-def split_elements(line):
-    """
-    Splits a line into elements based on long spaces.
-    Args:
-        line (str): The line to split.
-    Returns:
-        list: The split elements.
-    """
-    try:
-        elements = re.split(r'\s{2,}', line.strip())
-        combined_elements = []
-        i = 0
-        while i < len(elements):
-            if i < len(elements) - 1 and re.match(r'\d+(\.\d+)?x\d+(\.\d+)?m', elements[i + 1]):
-                combined_elements.append(elements[i] + ' ' + elements[i + 1])
-                i += 2
-            else:
-                combined_elements.append(elements[i])
-                i += 1
-        return combined_elements
-    except Exception as e:
-        print(f"Error splitting elements: {e}")
-        return []
-
-def save_to_excel(data, filename):
-    """
-    Saves the extracted data to an Excel file.
-    Args:
-        data (str): The extracted data.
-        filename (str): The path to the Excel file.
-    """
-    try:
-        rows = data.split('\n\n')
-        all_elements = []
-        for row in rows:
-            elements = []
-            for line in row.split('\n'):
-                elements.extend(split_elements(line))
-            all_elements.append(elements)
-        
-        formatted_rows = [row[:10] for row in all_elements if len(row) >= 10]
-        
-        df = pd.DataFrame(formatted_rows)
-        df.to_excel(filename, index=False, header=False)
-    except Exception as e:
-        print(f"Error saving to Excel: {e}")
+        print(f"Error converting XLS to XLSX: {e}")
+        return False
+    return True
 
 def organize_data(filename):
     """
-    Organizes data from the extracted table in an Excel file
+    Organizes data from the main sheet in an Excel file
     and writes the organized data to a new Excel file.
+
     Args:
-        filename (str): The path to the Excel file containing the extracted table.
+    filename (str): The path to the Excel file containing the main sheet.
     """
     try:
+        # Load the workbook
         wb = openpyxl.load_workbook(filename)
-        sheet = wb.active
 
+        # Get the (first) main sheet
+        main_sheet = wb.worksheets[0]
+
+        # Create a new workbook for the organized sheet
         organized_wb = openpyxl.Workbook()
         organized_sheet = organized_wb.active
         organized_sheet.title = "Organized"
 
-        i = 0
-        j = 0
+        # Initialize row indices for the main and organized sheets
+        i = 1  # Row index for the main sheet
+        j = 1  # Row index for the organized sheet
 
-        while i <= sheet.max_row:
-            i += 1
-            j += 1
-            part_no = sheet.cell(row=i, column=1).value
-            if part_no == 'Bill to:':
-                continue
-            elif part_no is None:
+        # Find the last row in the main sheet
+        last_row = main_sheet.max_row
+
+        while i <= last_row:
+            part_no = main_sheet.cell(row=i, column=1).value
+            if part_no is None:
                 break
 
-            desc_1 = sheet.cell(row=i, column=2).value
-            qty = int(sheet.cell(row=i, column=3).value)
-            unit_price = float(sheet.cell(row=i, column=4).value)
-            amount = sheet.cell(row=i, column=5).value
-            po_no = sheet.cell(row=i, column=6).value
-            desc_2 = sheet.cell(row=i, column=7).value
-            qty_unit = sheet.cell(row=i, column=8).value
-            unit_price_unit = sheet.cell(row=i, column=9).value
-            amount_unit = sheet.cell(row=i, column=10).value
+            # Read data from the main sheet
+            desc_1 = main_sheet.cell(row=i, column=2).value
+            qty = int(main_sheet.cell(row=i, column=3).value)
+            unit_price = float(main_sheet.cell(row=i, column=4).value)
+            amount = main_sheet.cell(row=i, column=5).value
+            po_no = main_sheet.cell(row=i+1, column=1).value
+            desc_2 = main_sheet.cell(row=i+1, column=2).value
+            qty_unit = main_sheet.cell(row=i+1, column=3).value
+            unit_price_unit = main_sheet.cell(row=i+1, column=4).value
+            amount_unit = main_sheet.cell(row=i+1, column=5).value
 
+            # Write data to the organized sheet
             organized_sheet.cell(row=j, column=1, value=f'Part No.{part_no}')
             organized_sheet.cell(row=j, column=2, value=f'Po. No.{po_no}')
             organized_sheet.cell(row=j, column=3, value=desc_1)
@@ -144,14 +86,21 @@ def organize_data(filename):
             organized_sheet.cell(row=j, column=9, value='85423900228')
             organized_sheet.cell(row=j, column=10, value='02')
 
+            # Format quantity cell
             qty_cell = organized_sheet.cell(row=j, column=5, value=qty)
             if isinstance(qty, (int, float)):
                 qty_cell.number_format = '#,##0'
             
+            # Format unit price cell
             unit_price_cell = organized_sheet.cell(row=j, column=7, value=unit_price)
             if isinstance(unit_price, (int, float)):
                 unit_price_cell.number_format = '#,##0.0000'
 
+            # Increment the row indices
+            i += 3
+            j += 1
+
+        # Adjust column widths
         for col in range(1, 10):
             max_length = 0
             column = get_column_letter(col)
@@ -164,9 +113,11 @@ def organize_data(filename):
             adjusted_width = (max_length + 2)
             organized_sheet.column_dimensions[column].width = adjusted_width
 
+        # Save the organized data to a new file in the 'uploads' folder
         output_filename = os.path.join("uploads", "Organized_Data.xlsx")
         organized_wb.save(output_filename)
         print(f"Organized data saved to '{output_filename}'")
+
     except FileNotFoundError:
         print(f"Error: File not found at '{filename}'.")
     except Exception as e:

@@ -4,4 +4,3 @@ Werkzeug
 openpyxl
 xlrd
 pandas
-textract

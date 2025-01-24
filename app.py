@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 # Configure upload folder and allowed file types
 UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'xls', 'xlsx', 'xlsm', 'doc', 'docx'}
+ALLOWED_EXTENSIONS = {'xls', 'xlsx', 'xlsm'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Limit file size to 16MB
 
@@ -278,18 +278,19 @@ def upload_file_vli():
             # Save the uploaded file
             file.save(filepath)
 
-            # Read doc file and do the processing
-            content = VLI.read_doc_file(filepath)
-            extracted_filename = os.path.splitext(filepath)[0] + '.xlsx'
-            data = VLI.extract_table_content(content)
-            VLI.save_to_excel(data, extracted_filename)
-            VLI.organize_data(extracted_filename)
+            # Convert xls to xlsx if needed
+            if filename.lower().endswith('.xls'):
+                xlsx_filename = os.path.splitext(filepath)[0] + '.xlsx'
+                if VLI.convert_xls_to_xlsx(filepath, xlsx_filename):
+                    VLI.organize_data(xlsx_filename)
+            else:
+                VLI.organize_data(filepath)
 
-            # Extract the base name from the original filename
-            base_name, _ = os.path.splitext(filename)
+            # Extract the base name and extension from the original filename
+            base_name, extension = os.path.splitext(filename)
 
             # Construct the processed filename
-            processed_filename = f"{base_name} (processed).xlsx"
+            processed_filename = f"{base_name} (processed){extension}"
 
             # Construct the processed filepath
             processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)

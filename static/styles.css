@@ -81,7 +81,7 @@ input[type="file"] {
 }
 
 .custom-file-upload {
-    background-color: #ff3333;
+    background-color: #007BFF;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -92,7 +92,7 @@ input[type="file"] {
 }
 
 .custom-file-upload:hover {
-    background-color: #ff0000;
+    background-color: #0056b3;
 }
 
 .custom-file-upload:focus {
