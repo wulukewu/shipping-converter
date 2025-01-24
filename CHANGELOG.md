@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.1](https://github.com/wulukewu/shipping-converter/compare/v1.11.0...v1.11.1) (2025-01-24)
+
+
+### Bug Fixes
+
+* removed bug-exist tag on navbar ([c083349](https://github.com/wulukewu/shipping-converter/commit/c083349d77a2173d0797879d402673318e9310c8))
+
 ## [1.11.0](https://github.com/wulukewu/shipping-converter/compare/v1.10.0...v1.11.0) (2025-01-24)
 
 
