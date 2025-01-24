@@ -63,6 +63,7 @@ section {
     width: 100%;
     text-align: center;
     margin-top: 80px; /* Adjusted for navbar height */
+    position: relative; /* Added for positioning the tips icon */
 }
 
 h1 {
@@ -145,4 +146,56 @@ button:hover#bug-exist {
     height: auto;
     margin-bottom: 20px;
     animation: spin 40s linear infinite;
+}
+
+.tips-icon-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tips-icon {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.tips-bubble {
+    display: none;
+    position: absolute;
+    top: 20%;
+    right: 0;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.3s ease-in-out;
+    width: 450px; /* Adjusted width for better layout */
+}
+
+.tips-bubble img {
+    width: 100%;
+    height: auto;
+    margin-bottom: 10px; /* Added margin for spacing */
+}
+
+.tips-bubble p {
+    font-size: 14px;
+    color: #333;
+    margin: 0;
+    line-height: 1.5;
+    text-align: left;
+}
+
+.tips-icon-container:hover .tips-bubble {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
