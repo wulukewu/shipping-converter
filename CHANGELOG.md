@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.11.0](https://github.com/wulukewu/shipping-converter/compare/v1.10.0...v1.11.0) (2025-01-24)
+
+
+### Features
+
+* add tips to VLI ([250b923](https://github.com/wulukewu/shipping-converter/commit/250b92328cda1d7b41924417bd110c5959fda540))
+
+
+### Bug Fixes
+
+* VLI process from xls/xlsx ([3d15ebd](https://github.com/wulukewu/shipping-converter/commit/3d15ebd1cbaa97851e06c6d2b5249239500ec7e9))
+
 ## [1.10.0](https://github.com/wulukewu/shipping-converter/compare/v1.9.0...v1.10.0) (2025-01-17)
 
 
