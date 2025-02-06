@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.0](https://github.com/wulukewu/shipping-converter/compare/v1.11.1...v1.12.0) (2025-02-06)
+
+
+### Features
+
+* update YONG_LAING from case_1/case_2 to made_in_taiwan/made_in_china ([910524d](https://github.com/wulukewu/shipping-converter/commit/910524df4be499dce1ff83b1a935414ba3877a9a))
+
 ## [1.11.1](https://github.com/wulukewu/shipping-converter/compare/v1.11.0...v1.11.1) (2025-01-24)
 
 
