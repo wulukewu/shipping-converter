@@ -40,95 +40,120 @@ def organize_data(filename):
     filename (str): The path to the Excel file containing 'INVOICE' sheet.
     """
     try:
-        # Load the workbook
+        # Load the input workbook and select the sheet
         wb = openpyxl.load_workbook(filename)
+        sheet = wb['INVOICE']
 
-        # Get the main sheet ('INVOICE')
-        if "INVOICE" not in wb.sheetnames:
-            print("Sheet named 'INVOICE' not found. Please make sure it exists.")
-            return
-        sheet = wb["INVOICE"]
-
-        # Create a new workbook for the organized sheet
+        # Create a new workbook for the output
         output_wb = openpyxl.Workbook()
         organized_sheet = output_wb.active
         organized_sheet.title = 'Organized'
 
+        # Define the headers and their indexes
+        headers = ['PO Number ', 'DESCRIPTION OF GOODS  ', 'PARTS  NO.', 'w/o', 'Longsys SKU#', 'Brand', 'Q\'ty (pcs)', 'Unit Price', 'Amount (USD)']
+        headers_idx = {header: -1 for i, header in enumerate(headers)}
+
         # Initialize variables
-        case_1 = False
-        case_2 = False
-        j = 1
+        made_in_taiwan = False
+        made_in_china = False
         i = 0
+        j = 1
 
         # Loop through the rows in column A using index i
         while i <= sheet.max_row:
             i += 1
-            po_number = sheet.cell(row=i, column=1).value
-            desc = sheet.cell(row=i, column=2).value
+            col_1 = sheet.cell(row=i, column=1).value
+            col_2 = sheet.cell(row=i, column=2).value
 
-            if case_1:
-                if case_2:
-                    if not desc:
+            # Check if the row is within the "Made In Taiwan" section
+            if made_in_taiwan:
+                # Check if the row is within the "Made In China" section
+                if made_in_china:
+                    if not col_2:
                         break
-                elif desc == 'Made In China':
-                    case_2 = True
+                elif col_1 == 'Made In China' or col_2 == 'Made In China':
+                    made_in_china = True
                     continue
-                elif desc == 'TOTAL: ':
-                    break
-                elif not desc:
+                elif not col_2:
                     continue
-            elif po_number == 'PO Number ':
-                case_1 = True
+
+            # Check if the row contains headers
+            elif col_1 in headers:
+
+                # Find the column indexes for the headers
+                for col_idx in range(1, sheet.max_column + 1):
+                    col_val = sheet.cell(row=i, column=col_idx).value
+                    if col_val in headers:
+                        headers_idx[col_val] = col_idx
+                
+                # Remove headers with index -1
+                headers = [header for header in headers if headers_idx[header] > 0]
+                headers_idx = {headers[i]: i for i in range(len(headers))}
+
+                made_in_taiwan = True
                 i += 1
                 continue
+
             else:
                 continue
 
-            if not case_2:
-                # Case 1: PO Number and Description
-                parts = sheet.cell(row=i, column=3).value
-                wo = sheet.cell(row=i, column=4).value
-                brand = sheet.cell(row=i, column=5).value
-                qty = sheet.cell(row=i, column=6).value
-                unit_price = sheet.cell(row=i, column=7).value
+            # Extract the row data based on the headers
+            row = [sheet.cell(row=i, column=headers_idx[header]+1).value for header in headers]
 
-                organized_sheet.cell(row=j, column=1, value=f'PO Number {po_number}')
-                organized_sheet.cell(row=j, column=2, value=desc)
-                organized_sheet.cell(row=j, column=3, value=f'PARTS  NO.{parts}')
-                organized_sheet.cell(row=j, column=4, value=wo)
-                organized_sheet.cell(row=j, column=5, value=qty)
-                organized_sheet.cell(row=j, column=6, value='PCS')
-                organized_sheet.cell(row=j, column=7, value=unit_price)
-                organized_sheet.cell(row=j, column=8, value=brand)
-                organized_sheet.cell(row=j, column=9, value='8523.51.00.00-0')
-                organized_sheet.cell(row=j, column=10, value='06')
+            k = 1
+            for header in headers:
+                if header in ['PO Number ', 'DESCRIPTION OF GOODS  ', 'PARTS  NO.', 'w/o', 'Longsys SKU#']:
+                    input_value = row[k - 1]
+                    if input_value:
+                        if header == 'PO Number ':
+                            input_value = f'PO Number {input_value}'
+                        elif header == 'PARTS  NO.':
+                            input_value = f'PARTS NO. {input_value}'
+                    else:
+                        input_value = ''
+                    organized_sheet.cell(row=j, column=k, value=input_value)
+                    k += 1
+                else:
+                    break
             
-            else:
-                # Case 2: Made In China
-                parts = sheet.cell(row=i, column=3).value
-                brand = sheet.cell(row=i, column=5).value
-                qty = sheet.cell(row=i, column=6).value
-                unit_price = sheet.cell(row=i, column=7).value
-
-                organized_sheet.cell(row=j, column=2, value=desc)
-                organized_sheet.cell(row=j, column=3, value=f'PARTS  NO.{parts}')
-                organized_sheet.cell(row=j, column=5, value=qty)
-                organized_sheet.cell(row=j, column=6, value='PCS')
-                organized_sheet.cell(row=j, column=7, value=unit_price)
-                organized_sheet.cell(row=j, column=8, value='NO BRAND')
-                organized_sheet.cell(row=j, column=9, value='8523.51.00.00-0')
-                organized_sheet.cell(row=j, column=10, value='82')
-
-            qty_cell = organized_sheet.cell(row=j, column=5, value=qty)
+            # Add quantity to the organized sheet
+            qty = row[headers_idx['Q\'ty (pcs)']]
+            qty_cell = organized_sheet.cell(row=j, column=k, value=qty)
             if isinstance(qty, (int, float)):
                 qty_cell.number_format = '#,##0'
-            
-            unit_price_cell = organized_sheet.cell(row=j, column=7, value=unit_price)
+            k += 1
+
+            # Add "PCS" to the organized sheet
+            organized_sheet.cell(row=j, column=k, value='PCS')
+            k += 1
+
+            # Add unit price to the organized sheet
+            unit_price = row[headers_idx['Unit Price']]
+            unit_price_cell = organized_sheet.cell(row=j, column=k, value=unit_price)
             if isinstance(unit_price, (int, float)):
                 unit_price_cell.number_format = '#,##0.0000'
+            k += 1
+
+            # Add brand to the organized sheet
+            brand = row[headers_idx['Brand']]
+            if brand:
+                organized_sheet.cell(row=j, column=k, value=brand)
+            else:
+                organized_sheet.cell(row=j, column=k, value='NO BRAND')
+            k += 1
+
+            # Add fixed value to the organized sheet
+            organized_sheet.cell(row=j, column=k, value='8523.51.00.00-0')
+            k += 1
+
+            # Add country code to the organized sheet
+            if made_in_china:
+                organized_sheet.cell(row=j, column=k, value='8B')
+            elif made_in_taiwan:
+                organized_sheet.cell(row=j, column=k, value='06')
 
             # Adjust column widths
-            for col in range(1, 10):
+            for col in range(1, k + 1):
                 max_length = 0
                 column = get_column_letter(col)
                 for cell in organized_sheet[column]:
