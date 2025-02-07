@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.5](https://github.com/wulukewu/shipping-converter/compare/v1.12.4...v1.12.5) (2025-02-07)
+
+
+### Bug Fixes
+
+* verification_item and verification_quantity may not exist ([b0cb045](https://github.com/wulukewu/shipping-converter/commit/b0cb0456ab33a0f54f871998c5a9d20f3acf5e88))
+
 ## [1.12.4](https://github.com/wulukewu/shipping-converter/compare/v1.12.3...v1.12.4) (2025-02-07)
 
 
