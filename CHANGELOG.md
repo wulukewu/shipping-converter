@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.3](https://github.com/wulukewu/shipping-converter/compare/v1.12.2...v1.12.3) (2025-02-07)
+
+
+### Bug Fixes
+
+* remove formater of unit_price and assembly_fee ([2c8b103](https://github.com/wulukewu/shipping-converter/commit/2c8b1036200fe16f95fbb88dd9e3d05d619178a6))
+
 ## [1.12.2](https://github.com/wulukewu/shipping-converter/compare/v1.12.1...v1.12.2) (2025-02-07)
 
 
