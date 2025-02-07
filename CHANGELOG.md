@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.4](https://github.com/wulukewu/shipping-converter/compare/v1.12.3...v1.12.4) (2025-02-07)
+
+
+### Bug Fixes
+
+* add date and num in the last item ([294c267](https://github.com/wulukewu/shipping-converter/commit/294c2675c0147c1803b2dcf68727ff2945fe7c71))
+
 ## [1.12.3](https://github.com/wulukewu/shipping-converter/compare/v1.12.2...v1.12.3) (2025-02-07)
 
 
