@@ -114,7 +114,7 @@ def read_xlsx_and_output_txt(xlsx_path, txt_path):
             if isinstance(unit_price, str) and '/pc' in unit_price:
                 try:
                     number, unit = unit_price.split('/')
-                    unit_price = f'{float(number):.4f}/{unit}'
+                    unit_price = f'{float(number):.3f}/{unit}'
                 except ValueError:
                     pass
             elif isinstance(float(unit_price), (int, float)):
@@ -124,7 +124,7 @@ def read_xlsx_and_output_txt(xlsx_path, txt_path):
             if isinstance(assembly_fee, str) and '/set' in assembly_fee:
                 try:
                     number, unit = assembly_fee.split('/')
-                    assembly_fee = f'{float(number):.4f}/{unit}'
+                    assembly_fee = f'{float(number):.3f}/{unit}'
                 except ValueError:
                     pass
             elif isinstance(float(assembly_fee), (int, float)):
