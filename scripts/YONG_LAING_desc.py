@@ -71,6 +71,13 @@ def read_xlsx_and_output_txt(xlsx_path, txt_path):
                 break
             # Check if the row has only one non-empty cell
             elif len(list(filter(None, row))) == 1:
+                # Write the content to the text file
+                if date is not None and num is not None:
+                    content = f'進口日期:{date} 報單號碼:{num}'
+                    txt_file.write(content + '\n')
+                    date = None
+                    num = None
+
                 content = ''.join([str(val) for val in list(filter(None, row))])
                 txt_file.write(content + '\n')
                 continue
@@ -83,7 +90,6 @@ def read_xlsx_and_output_txt(xlsx_path, txt_path):
                     txt_file.write(content + '\n')
                     date = None
                     num = None
-                    # i += 1
                 continue
             else:
                 if date_tmp is not None and num_tmp is not None:
