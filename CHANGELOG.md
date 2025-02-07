@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.2](https://github.com/wulukewu/shipping-converter/compare/v1.12.1...v1.12.2) (2025-02-07)
+
+
+### Bug Fixes
+
+* unit_price and assembly_fee float ([bcd145c](https://github.com/wulukewu/shipping-converter/commit/bcd145c01cb33bbc6641d8d555acc63478d95ae0))
+
 ## [1.12.1](https://github.com/wulukewu/shipping-converter/compare/v1.12.0...v1.12.1) (2025-02-07)
 
 
