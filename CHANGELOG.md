@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.12.1](https://github.com/wulukewu/shipping-converter/compare/v1.12.0...v1.12.1) (2025-02-07)
+
+
+### Bug Fixes
+
+* YONG_LAING_desc add verification_item and verification_quantity ([7f62cdb](https://github.com/wulukewu/shipping-converter/commit/7f62cdb321773cf8fa9082e4946618d4dea97a65))
+* YONG_LAING_desc when title are not in order ([7f62cdb](https://github.com/wulukewu/shipping-converter/commit/7f62cdb321773cf8fa9082e4946618d4dea97a65))
+
 ## [1.12.0](https://github.com/wulukewu/shipping-converter/compare/v1.11.1...v1.12.0) (2025-02-06)
 
 
