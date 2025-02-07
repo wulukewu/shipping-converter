@@ -56,8 +56,8 @@ def read_xlsx_and_output_txt(xlsx_path, txt_path):
             storage_tmp = row_data['容量']
             unit_price_tmp = row_data['進料單價(USD)']
             assembly_fee_tmp = row_data['詠聯組裝費(USD)']
-            verification_item_tmp = row_data['核銷報單項次']
-            verification_quantity_tmp = row_data['核銷數量']
+            verification_item_tmp = row_data['核銷報單項次'] if '核銷報單項次' in row_data else None
+            verification_quantity_tmp = row_data['核銷數量'] if '核銷數量' in row_data else None
 
             # Write verification item and quantity if they exist
             if verification_item is not None and verification_quantity is not None:
