@@ -110,26 +110,6 @@ def read_xlsx_and_output_txt(xlsx_path, txt_path):
             if verification_quantity_tmp is not None:
                 verification_quantity_tmp = verification_quantity_tmp.strip()
 
-            # Format unit price if it contains '/pc'
-            if isinstance(unit_price, str) and '/pc' in unit_price:
-                try:
-                    number, unit = unit_price.split('/')
-                    unit_price = f'{float(number):.3f}/{unit}'
-                except ValueError:
-                    pass
-            elif isinstance(float(unit_price), (int, float)):
-                unit_price = f'{float(unit_price):.4f}'
-            
-            # Format assembly fee if it contains '/set'
-            if isinstance(assembly_fee, str) and '/set' in assembly_fee:
-                try:
-                    number, unit = assembly_fee.split('/')
-                    assembly_fee = f'{float(number):.3f}/{unit}'
-                except ValueError:
-                    pass
-            elif isinstance(float(assembly_fee), (int, float)):
-                assembly_fee = f'{float(assembly_fee):.4f}'
-
             # Format verification quantity
             if isinstance(verification_quantity_tmp, (int, float)):
                 verification_quantity_tmp = f"{verification_quantity_tmp:,}"
