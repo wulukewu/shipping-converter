@@ -1,7 +1,12 @@
+# Description: This script is the main Flask application that serves the web interface for the data processing scripts.
 import os
 from flask import Flask, render_template, request, send_from_directory, redirect, url_for
 from werkzeug.utils import secure_filename
 from urllib.parse import unquote, quote
+import discord
+from dotenv import load_dotenv
+
+# Import the scripts for processing the data
 import scripts.Unictron as Unictron
 import scripts.DTJ_H as DTJ_H
 import scripts.YONG_LAING as YONG_LAING
@@ -18,6 +23,46 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Limit file size to 16MB
 
 # Create the upload directory if it doesn't exist
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# Load the Discord env from the environment
+load_dotenv()
+discord_token = os.getenv('DISCORD_TOKEN', None)
+try: discord_guild_id = int(os.environ['DISCORD_GUILD_ID'])
+except: discord_guild_id = None
+try: discord_channel_id = int(os.environ['DISCORD_CHANNEL_ID'])
+except: discord_channel_id = None
+
+# Send a message to a Discord channel
+def dc_send(message, token, guild_id, channel_id):
+    # Set up Discord client with default intents
+    intents = discord.Intents.default()
+    client = discord.Client(intents=intents)
+
+    @client.event
+    async def on_ready():
+        # Print login information
+        print(f'We have logged in as {client.user}')
+        # Get the guild (server) by ID
+        guild = discord.utils.get(client.guilds, id=guild_id)
+        if guild is None:
+            print(f'Guild with ID {guild_id} not found')
+            await client.close()
+            return
+
+        # Get the channel by ID
+        channel = discord.utils.get(guild.channels, id=channel_id)
+        if channel is None:
+            print(f'Channel with ID {channel_id} not found in guild {guild_id}')
+            await client.close()
+            return
+
+        # Send the message to the channel
+        await channel.send(message)
+        # Close the client after sending the message
+        await client.close()
+
+    # Run the Discord client with the provided token
+    client.run(token)
 
 
 def allowed_file(filename):
@@ -89,6 +134,8 @@ def upload_file_unictron():
 
             except Exception as e:
                 message = f"An error occurred during processing: {e}"
+                if discord_token and discord_guild_id and discord_channel_id:
+                    dc_send(f"[Unictron] {filename}\n{message}", discord_token, discord_guild_id, discord_channel_id)
 
     # Render the upload page with the message if available
     return render_template('Unictron.html', message=message)
@@ -151,6 +198,8 @@ def upload_file_dtj_h():
 
             except Exception as e:
                 message = f"An error occurred during processing: {e}"
+                if discord_token and discord_guild_id and discord_channel_id:
+                    dc_send(f"[DTJ_H] {filename}\n{message}", discord_token, discord_guild_id, discord_channel_id)
 
     # Render the upload page with the message if available
     return render_template('DTJ_H.html', message=message)
@@ -213,6 +262,8 @@ def upload_file_yong_laing():
 
             except Exception as e:
                 message = f"An error occurred during processing: {e}"
+                if discord_token and discord_guild_id and discord_channel_id:
+                    dc_send(f"[YONG_LAING] {filename}\n{message}", discord_token, discord_guild_id, discord_channel_id)
 
     # Render the upload page with the message if available
     return render_template('YONG_LAING.html', message=message)
@@ -273,6 +324,8 @@ def upload_file_yong_laing_desc():
 
             except Exception as e:
                 message = f"An error occurred during processing: {e}"
+                if discord_token and discord_guild_id and discord_channel_id:
+                    dc_send(f"[YONG_LAING_desc] {filename}\n{message}", discord_token, discord_guild_id, discord_channel_id)
 
     # Render the upload page with the message if available
     return render_template('YONG_LAING_desc.html', message=message)
@@ -335,6 +388,8 @@ def upload_file_vli():
 
             except Exception as e:
                 message = f"An error occurred during processing: {e}"
+                if discord_token and discord_guild_id and discord_channel_id:
+                    dc_send(f"[VLI] {filename}\n{message}", discord_token, discord_guild_id, discord_channel_id)
 
     # Render the upload page with the message if available
     return render_template('VLI.html', message=message)

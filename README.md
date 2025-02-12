@@ -16,19 +16,21 @@ ShippingConverter is a tool for converting shipping data. This project includes 
 ### Installation
 
 1. Clone the repository:
-    ```sh
-    git clone https://github.com/wulukewu/shipping-converter.git
-    cd shipping-converter
-    ```
+
+   ```sh
+   git clone https://github.com/wulukewu/shipping-converter.git
+   cd shipping-converter
+   ```
 
 2. Install the required Python packages:
-    ```sh
-    pip install -r requirements.txt
-    ```
+   ```sh
+   pip install -r requirements.txt
+   ```
 
 ### Running the Application
 
 To run the Flask application locally, use the following command:
+
 ```sh
 flask run
 ```
@@ -38,18 +40,20 @@ flask run
 To build and run the Docker container, use the following commands:
 
 1. Build the Docker image:
-    ```sh
-    docker build -t shipping-converter .
-    ```
+
+   ```sh
+   docker build -t shipping-converter .
+   ```
 
 2. Run the Docker container:
-    ```sh
-    docker run -d -p 5000:5000 --name shipping-converter shipping-converter
-    ```
+   ```sh
+   docker run -d -p 5000:5000 --name shipping-converter shipping-converter
+   ```
 
 ### Pull Docker Image
 
 To pull the Docker image from GitHub Hub, use the following command:
+
 ```sh
 docker pull wulukewu/shipping-converter:latest
 ```
@@ -59,7 +63,7 @@ docker pull wulukewu/shipping-converter:latest
 To use Docker Compose, create a `compose.yaml` file with the following content:
 
 ```yaml
-version: '3.8'
+version: "3.8"
 
 services:
   shipping-converter:
@@ -72,6 +76,18 @@ services:
     volumes:
       - ./uploads:/app/uploads
 ```
+
+### Discord Integration
+
+To enable Discord notifications, create a `.env` file with the following content:
+
+```env
+DISCORD_TOKEN=your_discord_token
+DISCORD_GUILD_ID=your_discord_guild_id
+DISCORD_CHANNEL_ID=your_discord_channel_id
+```
+
+Replace `your_discord_token`, `your_discord_guild_id`, and `your_discord_channel_id` with your actual Discord bot token, guild ID, and channel ID.
 
 ### GitHub Actions
 
@@ -93,10 +109,3 @@ Contributions are welcome! Please open an issue or submit a pull request for any
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
-
-### Explanation:
-1. **Getting Started**: Added sections for prerequisites, installation, and running the application.
-2. **Build and Run Docker**: Provided clear steps to build and run the Docker container.
-3. **GitHub Actions**: Added a section to explain the GitHub Actions workflows used in the project.
-4. **Contributing**: Added a section to encourage contributions.
-5. **License**: Added a section for the license information.
