@@ -33,6 +33,15 @@
             <input id="file-upload" type="file" name="file" accept=".xlsx" onchange="enableSubmitButton()">
             <button id="submit-button" type="submit" disabled>處理文件</button>
         </form>
+        <div class="tips-icon-container">
+            <img src="{{ url_for('static', filename='img/YONG_LAING_desc/tips_icon.png') }}" alt="Tips Icon" class="tips-icon">
+            <div class="tips-bubble">
+                <img src="{{ url_for('static', filename='img/YONG_LAING_desc/YONG_LAING_desc_tips.gif') }}" alt="YONG_LAING_desc Tips">
+                <p>STEP 1：直接貼上</p>
+                <p>STEP 2：點選工具列中的常用>>格式，選擇文字</p>
+                <p>STEP 3：選擇性貼上>>符合目的格式設定</p>
+            </div>
+        </div>
     </section>
 </body>
 </html>
