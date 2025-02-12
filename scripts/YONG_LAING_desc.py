@@ -27,8 +27,6 @@ def read_xlsx_and_output_txt(xlsx_path, txt_path):
         verification_item = None
         verification_quantity = None
 
-        first_print_date = True
-
         # Find the column indexes for the headers
         for col_idx in range(1, sheet.max_column + 1):
             col_val = sheet.cell(row=i, column=col_idx).value
@@ -95,10 +93,6 @@ def read_xlsx_and_output_txt(xlsx_path, txt_path):
                 if date_tmp is not None and num_tmp is not None:
                     if date is None and num is None:
                         pass
-                    elif first_print_date:
-                        first_print_date = False
-                        date = date_tmp
-                        num = num_tmp
                     else:
                         content = f'進口日期:{date} 報單號碼:{num}'
                         txt_file.write(content + '\n')
