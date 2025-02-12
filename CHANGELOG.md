@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.7](https://github.com/wulukewu/shipping-converter/compare/v1.12.6...v1.12.7) (2025-02-12)
+
+
+### Bug Fixes
+
+* add YONG_LAING_desc tips ([90d3def](https://github.com/wulukewu/shipping-converter/commit/90d3deff398b9b56d35f6b1d84e5ffd449080e87))
+
 ## [1.12.6](https://github.com/wulukewu/shipping-converter/compare/v1.12.5...v1.12.6) (2025-02-12)
 
 
