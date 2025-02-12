@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.8](https://github.com/wulukewu/shipping-converter/compare/v1.12.7...v1.12.8) (2025-02-12)
+
+
+### Bug Fixes
+
+* update VLI_tips.gif ([3ab3ac7](https://github.com/wulukewu/shipping-converter/commit/3ab3ac7b6903fb014d4fd3345d7dc84fca8d97f3))
+
 ## [1.12.7](https://github.com/wulukewu/shipping-converter/compare/v1.12.6...v1.12.7) (2025-02-12)
 
 
