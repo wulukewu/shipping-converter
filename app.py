@@ -35,274 +35,309 @@ def index():
 @app.route('/Unictron', methods=['GET', 'POST'])
 def upload_file_unictron():
     """Handles file upload and processing for Unictron."""
+    message = None
     if request.method == 'POST':
         # Check if a file was included in the request
         if 'file' not in request.files:
-            return redirect(request.url)
+            message = "No file part in the request."
+            return render_template('Unictron.html', message=message)
 
         file = request.files['file']
 
         # Check if a file was selected
         if file.filename == '':
-            return redirect(request.url)
+            message = "No file selected."
+            return render_template('Unictron.html', message=message)
 
         # Check if the file extension is allowed
         if file and allowed_file(file.filename):
-            # Unquote the filename to handle URL-encoded characters
-            filename = unquote(file.filename)
+            try:
+                # Unquote the filename to handle URL-encoded characters
+                filename = unquote(file.filename)
 
-            # Sanitize the filename using secure_filename
-            safe_filename = secure_filename(filename)
+                # Sanitize the filename using secure_filename
+                safe_filename = secure_filename(filename)
 
-            # Construct the full file path for saving
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
+                # Construct the full file path for saving
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
 
-            # Save the uploaded file
-            file.save(filepath)
+                # Save the uploaded file
+                file.save(filepath)
 
-            # Convert xls to xlsx if needed
-            if filename.lower().endswith('.xls'):
-                xlsx_filename = os.path.splitext(filepath)[0] + '.xlsx'
-                if Unictron.convert_xls_to_xlsx(filepath, xlsx_filename):
-                    Unictron.organize_data(xlsx_filename)
-            else:
-                Unictron.organize_data(filepath)
+                # Convert xls to xlsx if needed
+                if filename.lower().endswith('.xls'):
+                    xlsx_filename = os.path.splitext(filepath)[0] + '.xlsx'
+                    if Unictron.convert_xls_to_xlsx(filepath, xlsx_filename):
+                        Unictron.organize_data(xlsx_filename)
+                else:
+                    Unictron.organize_data(filepath)
 
-            # Extract the base name and extension from the original filename
-            base_name, extension = os.path.splitext(filename)
+                # Extract the base name and extension from the original filename
+                base_name, extension = os.path.splitext(filename)
 
-            # Construct the processed filename
-            processed_filename = f"{base_name} (processed){extension}"
+                # Construct the processed filename
+                processed_filename = f"{base_name} (processed){extension}"
 
-            # Construct the processed filepath
-            processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
+                # Construct the processed filepath
+                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
 
-            # Rename the processed file
-            os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
+                # Rename the processed file
+                os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
 
-            # Redirect to download the processed file
-            return redirect(url_for('download_file', name=quote(processed_filename)))
+                # Redirect to download the processed file
+                return redirect(url_for('download_file', name=quote(processed_filename)))
 
-    # Render the upload page if it is a GET request
-    return render_template('Unictron.html')
+            except Exception as e:
+                message = f"An error occurred during processing: {e}"
+
+    # Render the upload page with the message if available
+    return render_template('Unictron.html', message=message)
 
 
 @app.route('/DTJ_H', methods=['GET', 'POST'])
 def upload_file_dtj_h():
     """Handles file upload and processing for DTJ_H."""
+    message = None
     if request.method == 'POST':
         # Check if a file was included in the request
         if 'file' not in request.files:
-            return redirect(request.url)
+            message = "No file part in the request."
+            return render_template('DTJ_H.html', message=message)
 
         file = request.files['file']
 
         # Check if a file was selected
         if file.filename == '':
-            return redirect(request.url)
+            message = "No file selected."
+            return render_template('DTJ_H.html', message=message)
 
         # Check if the file extension is allowed
         if file and allowed_file(file.filename):
-            # Unquote the filename to handle URL-encoded characters
-            filename = unquote(file.filename)
+            try:
+                # Unquote the filename to handle URL-encoded characters
+                filename = unquote(file.filename)
 
-            # Sanitize the filename using secure_filename
-            safe_filename = secure_filename(filename)
+                # Sanitize the filename using secure_filename
+                safe_filename = secure_filename(filename)
 
-            # Construct the full file path for saving
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
+                # Construct the full file path for saving
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
 
-            # Save the uploaded file
-            file.save(filepath)
+                # Save the uploaded file
+                file.save(filepath)
 
-            # Convert xls to xlsx if needed
-            if filename.lower().endswith('.xls'):
-                xlsx_filename = os.path.splitext(filepath)[0] + '.xlsx'
-                if DTJ_H.convert_xls_to_xlsx(filepath, xlsx_filename):
-                    DTJ_H.organize_data(xlsx_filename)
-            else:
-                DTJ_H.organize_data(filepath)
+                # Convert xls to xlsx if needed
+                if filename.lower().endswith('.xls'):
+                    xlsx_filename = os.path.splitext(filepath)[0] + '.xlsx'
+                    if DTJ_H.convert_xls_to_xlsx(filepath, xlsx_filename):
+                        DTJ_H.organize_data(xlsx_filename)
+                else:
+                    DTJ_H.organize_data(filepath)
 
-            # Extract the base name and extension from the original filename
-            base_name, extension = os.path.splitext(filename)
+                # Extract the base name and extension from the original filename
+                base_name, extension = os.path.splitext(filename)
 
-            # Construct the processed filename
-            processed_filename = f"{base_name} (processed).xlsx"
+                # Construct the processed filename
+                processed_filename = f"{base_name} (processed).xlsx"
 
-            # Construct the processed filepath
-            processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
+                # Construct the processed filepath
+                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
 
-            # Rename the processed file
-            os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
+                # Rename the processed file
+                os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
 
-            # Redirect to download the processed file
-            return redirect(url_for('download_file', name=quote(processed_filename)))
+                # Redirect to download the processed file
+                return redirect(url_for('download_file', name=quote(processed_filename)))
 
-    # Render the upload page if it is a GET request
-    return render_template('DTJ_H.html')
+            except Exception as e:
+                message = f"An error occurred during processing: {e}"
+
+    # Render the upload page with the message if available
+    return render_template('DTJ_H.html', message=message)
 
 
 @app.route('/YONG_LAING', methods=['GET', 'POST'])
 def upload_file_yong_laing():
     """Handles file upload and processing for YONG_LAING."""
+    message = None
     if request.method == 'POST':
         # Check if a file was included in the request
         if 'file' not in request.files:
-            return redirect(request.url)
+            message = "No file part in the request."
+            return render_template('YONG_LAING.html', message=message)
 
         file = request.files['file']
 
         # Check if a file was selected
         if file.filename == '':
-            return redirect(request.url)
+            message = "No file selected."
+            return render_template('YONG_LAING.html', message=message)
 
         # Check if the file extension is allowed
         if file and allowed_file(file.filename):
-            # Unquote the filename to handle URL-encoded characters
-            filename = unquote(file.filename)
+            try:
+                # Unquote the filename to handle URL-encoded characters
+                filename = unquote(file.filename)
 
-            # Sanitize the filename using secure_filename
-            safe_filename = secure_filename(filename)
+                # Sanitize the filename using secure_filename
+                safe_filename = secure_filename(filename)
 
-            # Construct the full file path for saving
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
+                # Construct the full file path for saving
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
 
-            # Save the uploaded file
-            file.save(filepath)
+                # Save the uploaded file
+                file.save(filepath)
 
-            # Convert xls to xlsx if needed
-            if filename.lower().endswith('.xls'):
-                xlsx_filename = os.path.splitext(filepath)[0] + '.xlsx'
-                if YONG_LAING.convert_xls_to_xlsx(filepath, xlsx_filename):
-                    YONG_LAING.organize_data(xlsx_filename)
-            else:
-                YONG_LAING.organize_data(filepath)
+                # Convert xls to xlsx if needed
+                if filename.lower().endswith('.xls'):
+                    xlsx_filename = os.path.splitext(filepath)[0] + '.xlsx'
+                    if YONG_LAING.convert_xls_to_xlsx(filepath, xlsx_filename):
+                        YONG_LAING.organize_data(xlsx_filename)
+                else:
+                    YONG_LAING.organize_data(filepath)
 
-            # Extract the base name and extension from the original filename
-            base_name, extension = os.path.splitext(filename)
+                # Extract the base name and extension from the original filename
+                base_name, extension = os.path.splitext(filename)
 
-            # Construct the processed filename
-            processed_filename = f"{base_name} (processed){extension}"
+                # Construct the processed filename
+                processed_filename = f"{base_name} (processed){extension}"
 
-            # Construct the processed filepath
-            processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
+                # Construct the processed filepath
+                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
 
-            # Rename the processed file
-            os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
+                # Rename the processed file
+                os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
 
-            # Redirect to download the processed file
-            return redirect(url_for('download_file', name=quote(processed_filename)))
+                # Redirect to download the processed file
+                return redirect(url_for('download_file', name=quote(processed_filename)))
 
-    # Render the upload page if it is a GET request
-    return render_template('YONG_LAING.html')
+            except Exception as e:
+                message = f"An error occurred during processing: {e}"
+
+    # Render the upload page with the message if available
+    return render_template('YONG_LAING.html', message=message)
 
 
 @app.route('/YONG_LAING_desc', methods=['GET', 'POST'])
 def upload_file_yong_laing_desc():
     """Handles file upload and processing for YONG_LAING_desc."""
+    message = None
     if request.method == 'POST':
         # Check if a file was included in the request
         if 'file' not in request.files:
-            return redirect(request.url)
+            message = "No file part in the request."
+            return render_template('YONG_LAING_desc.html', message=message)
 
         file = request.files['file']
 
         # Check if a file was selected
         if file.filename == '':
-            return redirect(request.url)
+            message = "No file selected."
+            return render_template('YONG_LAING_desc.html', message=message)
 
         # Check if the file extension is allowed
         if file and allowed_file(file.filename):
-            # Unquote the filename to handle URL-encoded characters
-            filename = unquote(file.filename)
+            try:
+                # Unquote the filename to handle URL-encoded characters
+                filename = unquote(file.filename)
 
-            # Sanitize the filename using secure_filename
-            safe_filename = secure_filename(filename)
+                # Sanitize the filename using secure_filename
+                safe_filename = secure_filename(filename)
 
-            # Construct the full file path for saving
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
+                # Construct the full file path for saving
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
 
-            # Save the uploaded file
-            file.save(filepath)
+                # Save the uploaded file
+                file.save(filepath)
 
-            # Construct the output txt filename for the processing
-            txt_filename = os.path.splitext(filepath)[0] + '.txt'
+                # Construct the output txt filename for the processing
+                txt_filename = os.path.splitext(filepath)[0] + '.txt'
 
-            # Process the data from the file
-            YONG_LAING_desc.read_xlsx_and_output_txt(filepath, txt_filename)
+                # Process the data from the file
+                YONG_LAING_desc.read_xlsx_and_output_txt(filepath, txt_filename)
 
-            # Extract the base name and extension from the original filename
-            base_name, extension = os.path.splitext(filename)
+                # Extract the base name and extension from the original filename
+                base_name, extension = os.path.splitext(filename)
 
-            # Construct the processed filename
-            processed_filename = f"{base_name} (processed).txt"
+                # Construct the processed filename
+                processed_filename = f"{base_name} (processed).txt"
 
-            # Construct the processed filepath
-            processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
+                # Construct the processed filepath
+                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
 
-            # Rename the file
-            os.rename(txt_filename, processed_filepath)
+                # Rename the file
+                os.rename(txt_filename, processed_filepath)
 
-            # Redirect to download the processed file
-            return redirect(url_for('download_file', name=quote(processed_filename)))
+                # Redirect to download the processed file
+                return redirect(url_for('download_file', name=quote(processed_filename)))
 
-    # Render the upload page if it is a GET request
-    return render_template('YONG_LAING_desc.html')
+            except Exception as e:
+                message = f"An error occurred during processing: {e}"
+
+    # Render the upload page with the message if available
+    return render_template('YONG_LAING_desc.html', message=message)
 
 
 @app.route('/VLI', methods=['GET', 'POST'])
 def upload_file_vli():
     """Handles file upload and processing for VLI."""
+    message = None
     if request.method == 'POST':
         # Check if a file was included in the request
         if 'file' not in request.files:
-            return redirect(request.url)
+            message = "No file part in the request."
+            return render_template('VLI.html', message=message)
 
         file = request.files['file']
 
         # Check if a file was selected
         if file.filename == '':
-            return redirect(request.url)
+            message = "No file selected."
+            return render_template('VLI.html', message=message)
 
         # Check if the file extension is allowed
         if file and allowed_file(file.filename):
-            # Unquote the filename to handle URL-encoded characters
-            filename = unquote(file.filename)
+            try:
+                # Unquote the filename to handle URL-encoded characters
+                filename = unquote(file.filename)
 
-            # Sanitize the filename using secure_filename
-            safe_filename = secure_filename(filename)
+                # Sanitize the filename using secure_filename
+                safe_filename = secure_filename(filename)
 
-            # Construct the full file path for saving
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
+                # Construct the full file path for saving
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
 
-            # Save the uploaded file
-            file.save(filepath)
+                # Save the uploaded file
+                file.save(filepath)
 
-            # Convert xls to xlsx if needed
-            if filename.lower().endswith('.xls'):
-                xlsx_filename = os.path.splitext(filepath)[0] + '.xlsx'
-                if VLI.convert_xls_to_xlsx(filepath, xlsx_filename):
-                    VLI.organize_data(xlsx_filename)
-            else:
-                VLI.organize_data(filepath)
+                # Convert xls to xlsx if needed
+                if filename.lower().endswith('.xls'):
+                    xlsx_filename = os.path.splitext(filepath)[0] + '.xlsx'
+                    if VLI.convert_xls_to_xlsx(filepath, xlsx_filename):
+                        VLI.organize_data(xlsx_filename)
+                else:
+                    VLI.organize_data(filepath)
 
-            # Extract the base name and extension from the original filename
-            base_name, extension = os.path.splitext(filename)
+                # Extract the base name and extension from the original filename
+                base_name, extension = os.path.splitext(filename)
 
-            # Construct the processed filename
-            processed_filename = f"{base_name} (processed){extension}"
+                # Construct the processed filename
+                processed_filename = f"{base_name} (processed){extension}"
 
-            # Construct the processed filepath
-            processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
+                # Construct the processed filepath
+                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
 
-            # Rename the processed file
-            os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
+                # Rename the processed file
+                os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
 
-            # Redirect to download the processed file
-            return redirect(url_for('download_file', name=quote(processed_filename)))
+                # Redirect to download the processed file
+                return redirect(url_for('download_file', name=quote(processed_filename)))
 
-    # Render the upload page if it is a GET request
-    return render_template('VLI.html')
+            except Exception as e:
+                message = f"An error occurred during processing: {e}"
+
+    # Render the upload page with the message if available
+    return render_template('VLI.html', message=message)
 
 
 @app.route('/uploads/<name>')
