@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.0](https://github.com/wulukewu/shipping-converter/compare/v1.12.8...v1.13.0) (2025-02-12)
+
+
+### Features
+
+* show error message when error ([c34d7e0](https://github.com/wulukewu/shipping-converter/commit/c34d7e0107899c69ae5541e568d50bc789d6f80c))
+
 ## [1.12.8](https://github.com/wulukewu/shipping-converter/compare/v1.12.7...v1.12.8) (2025-02-12)
 
 
