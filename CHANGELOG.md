@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.6](https://github.com/wulukewu/shipping-converter/compare/v1.12.5...v1.12.6) (2025-02-12)
+
+
+### Bug Fixes
+
+* remove first_print_date ([e4e2d11](https://github.com/wulukewu/shipping-converter/commit/e4e2d114b0832626be2330b8ca4b19dbd9f5056e))
+
 ## [1.12.5](https://github.com/wulukewu/shipping-converter/compare/v1.12.4...v1.12.5) (2025-02-07)
 
 
