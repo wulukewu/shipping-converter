@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.0](https://github.com/wulukewu/shipping-converter/compare/v1.13.0...v1.14.0) (2025-02-12)
+
+
+### Features
+
+* add discord notification when showing error ([b5b698f](https://github.com/wulukewu/shipping-converter/commit/b5b698f5177175f6cadcd27f9d3b161445eba5e1))
+
 ## [1.13.0](https://github.com/wulukewu/shipping-converter/compare/v1.12.8...v1.13.0) (2025-02-12)
 
 
