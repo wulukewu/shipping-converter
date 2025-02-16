@@ -50,6 +50,7 @@ def organize_data(filename):
         organized_wb = openpyxl.Workbook()
         org_sheet = organized_wb.active
         org_sheet.title = "Organized"
+        ctn_sheet = organized_wb.create_sheet(title="ctn")
         # Find the last row of the HM sheet
         last_row = hm_sheet.max_row
         # Initialize flags
@@ -215,6 +216,96 @@ def organize_data(filename):
                      org_sheet.row_dimensions[cell.row].auto_size = True
         for column_cells in org_sheet.columns:
             org_sheet.column_dimensions[column_cells[0].column_letter].auto_size = True
+
+        # =====================================
+        # CTN SHEET IMPLEMENTATION STARTS HERE
+        # =====================================
+        found_start_ctn = False
+        found_end_ctn = False
+        start_row_ctn = 0
+        end_row_ctn = 0
+        j_ctn = 0
+        # Loop through column A to find start and end points
+        for i in range(1, last_row + 1):
+            cell_value = hm_sheet.cell(row=i, column=1).value
+            if j_ctn < 1 and cell_value and "CD PRINTING MATTERS" in cell_value.upper():
+                j_ctn = i + 1
+            if not found_start_ctn:
+                if cell_value and "QTY FOR EACH CTN" in cell_value.upper():
+                    start_row_ctn = i + 1
+                    found_start_ctn = True
+            elif not found_end_ctn:
+                if cell_value and "pallet".upper() in cell_value.upper():
+                    end_row_ctn = i - 1
+                    found_end_ctn = True
+                    break
+        # Check if we found both the start and end markers
+        if not found_start_ctn or not found_end_ctn:
+            print("Could not find start or end markers for CTN sheet")
+            return
+        # Initialize k for the organized sheet row
+        k = 1
+        # Skip the first row from start
+        start_row_ctn += 1
+        desc_list = []
+        goods = None
+        # Loop through the rows between the start and end rows in HM sheet
+        for i in range(start_row_ctn, end_row_ctn + 1):
+            ctn = hm_sheet.cell(row=i, column=1).value
+            qty = hm_sheet.cell(row=i, column=4).value
+            net_weight = hm_sheet.cell(row=i, column=6).value
+            gross_weight = hm_sheet.cell(row=i, column=9).value
+            # Check if ctn is blank, if it is, skip to the next iteration
+            if not ctn or str(ctn).strip() == "":
+                continue
+            print(f'CTN: {ctn}, QTY: {qty}, Net Weight: {net_weight}, Gross Weight: {gross_weight}')
+            if qty is None:
+                goods_tmp = hm_sheet.cell(row=i+1, column=1).value.split(' ')[0]
+                if goods is None:
+                    goods = goods_tmp
+                elif goods != goods_tmp:
+                    pcs_per_set = 0
+                    while True:
+                        desc_goods = str(hm_sheet.cell(row=j_ctn, column=1).value)
+                        print(f'Goods: {goods}, Desc: {desc_goods}')
+                        if 'free sample' in desc_goods:
+                            if pcs_per_set > 1:
+                                pcs_per_set_desc = f' ({pcs_per_set}pcs/set)'
+                            else:
+                                pcs_per_set_desc = ''
+                            free_sample_qty = hm_sheet.cell(row=j_ctn, column=7).value
+                            ctn_sheet.cell(row=k, column=1).value = f'{goods}{pcs_per_set_desc}\n({free_sample_qty}SET-free sample)'
+                            j_ctn += 1
+                            k += 1
+                            break
+                        elif goods in desc_goods:
+                            pcs_per_set += 1
+                            j_ctn += 1
+                        else:
+                            j_ctn += 1
+                    desc = '\n'.join(desc_list)
+                    ctn_sheet.cell(row=k, column=1).value = desc
+                    k += 1
+                    # for desc in desc_list:
+                    #     ctn_sheet.cell(row=k, column=1).value = desc
+                    #     k += 1
+                    desc_list = []
+                    goods = goods_tmp
+                else:
+                    pass
+                # ctn_sheet.cell(row=k, column=1).value = f'{ctn}'
+                # k += 1
+            else:
+                # ctn_sheet.cell(row=k, column=1).value = f'{ctn}-{qty}PCS'
+                # k += 1
+                desc_list.append(f'{ctn}-{qty}PCS')
+        # Autofit all rows and columns in ctn sheet
+        for row in ctn_sheet.rows:
+           for cell in row:
+                if cell.value:
+                     ctn_sheet.row_dimensions[cell.row].auto_size = True
+        for column_cells in ctn_sheet.columns:
+            ctn_sheet.column_dimensions[column_cells[0].column_letter].auto_size = True
          # Save the organized data to a new file in the 'uploads' folder
         output_filename = os.path.join("uploads","Organized_Data.xlsx")
         organized_wb.save(output_filename)
