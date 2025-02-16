@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.15.1](https://github.com/wulukewu/shipping-converter/compare/v1.15.0...v1.15.1) (2025-02-16)
+
+
+### Bug Fixes
+
+* add 'ctn no.HM' ([61cd939](https://github.com/wulukewu/shipping-converter/commit/61cd93918584862d0344d90f29b769bf2792b32f))
+* will not missing last one by checking 'pallet' ([61cd939](https://github.com/wulukewu/shipping-converter/commit/61cd93918584862d0344d90f29b769bf2792b32f))
+
 ## [1.15.0](https://github.com/wulukewu/shipping-converter/compare/v1.14.0...v1.15.0) (2025-02-16)
 
 
