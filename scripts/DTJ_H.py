@@ -282,7 +282,7 @@ def organize_data(filename):
                     found_start_ctn = True
             elif not found_end_ctn:
                 if cell_value and "pallet".upper() in str(cell_value).upper():
-                    end_row_ctn = i - 1
+                    end_row_ctn = i
                     found_end_ctn = True
                     break
 
@@ -311,9 +311,9 @@ def organize_data(filename):
             if not ctn or str(ctn).strip() == "":
                 continue
 
-            print(f'CTN: {ctn}, QTY: {qty}, Net Weight: {net_weight}, Gross Weight: {gross_weight}')
+            # print(f'CTN: {ctn}, QTY: {qty}, Net Weight: {net_weight}, Gross Weight: {gross_weight}')
 
-            if qty is None:
+            if qty is None or 'pallet' in str(ctn).lower():
                 goods_tmp = hm_sheet.cell(row=i + 1, column=1).value.split(' ')[0]
                 if goods is None:
                     goods = goods_tmp
@@ -321,7 +321,7 @@ def organize_data(filename):
                     pcs_per_set = 0
                     while True:
                         desc_goods = str(hm_sheet.cell(row=j_ctn, column=1).value)
-                        print(f'Goods: {goods}, Desc: {desc_goods}')
+                        # print(f'Goods: {goods}, Desc: {desc_goods}')
                         if 'free sample' in desc_goods:
                             if pcs_per_set > 1:
                                 pcs_per_set_desc = f' ({pcs_per_set}pcs/set)'
@@ -337,13 +337,30 @@ def organize_data(filename):
                             j_ctn += 1
                         else:
                             j_ctn += 1
-                    desc = '\n'.join(desc_list)
+
+                    ctn_no_list = []
+                    for desc in desc_list:
+                        if 'ctn no.HM' in desc:
+                            ctn_no_list.extend(list(map(int, desc.split(' ')[-1].split('-'))))
+                    if len(ctn_no_list) > 1:
+                        desc_list = [desc if 'ctn no.HM' not in desc else f"\n{desc}" for desc in desc_list]
+                        for desc_idx in range(len(desc_list)):
+                            if '\n' in desc_list[desc_idx] and 'ctn no.HM' in desc_list[desc_idx]:
+                                desc_list[desc_idx] = desc_list[desc_idx].replace('\n', '')
+                                break
+
+                        ctn_no_num = max(ctn_no_list) - min(ctn_no_list) + 1
+                        desc_list.append(f'x {ctn_no_num}CTNS')
+                    else:
+                        desc_list = [desc for desc in desc_list if 'ctn no.HM' not in desc]
+
+                    desc = '\n'.join(desc_list).strip()
                     ctn_sheet.cell(row=k, column=1).value = desc
                     k += 1
                     desc_list = []
                     goods = goods_tmp
-                else:
-                    pass
+                if 'ctn no.HM' in str(ctn):
+                    desc_list.append(ctn)
             else:
                 desc_list.append(f'{ctn}-{qty}PCS')
 
