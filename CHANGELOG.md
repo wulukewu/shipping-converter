@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.2](https://github.com/wulukewu/shipping-converter/compare/v1.15.1...v1.15.2) (2025-03-16)
+
+
+### Bug Fixes
+
+* made_in_taiwan or made_in_china may appear first ([563301c](https://github.com/wulukewu/shipping-converter/commit/563301cb06041e91696de4538fa8abe2deb5ddfe))
+
 ## [1.15.1](https://github.com/wulukewu/shipping-converter/compare/v1.15.0...v1.15.1) (2025-02-16)
 
 
