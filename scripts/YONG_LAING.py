@@ -65,17 +65,21 @@ def organize_data(filename):
             col_1 = sheet.cell(row=i, column=1).value
             col_2 = sheet.cell(row=i, column=2).value
 
-            # Check if the row is within the "Made In Taiwan" section
-            if made_in_taiwan:
-                # Check if the row is within the "Made In China" section
-                if made_in_china:
-                    if not col_2:
-                        break
-                elif col_1 == 'Made In China' or col_2 == 'Made In China':
-                    made_in_china = True
-                    continue
-                elif not col_2:
-                    continue
+            # Check if the row indicates the start of "Made In Taiwan" section
+            if col_1 == 'Made In Taiwan' or col_2 == 'Made In Taiwan':
+                made_in_taiwan = True
+                continue
+            # Check if the row indicates the start of "Made In China" section
+            elif col_1 == 'Made In China' or col_2 == 'Made In China':
+                made_in_china = True
+                continue
+            # Skip rows with empty second column
+            elif not col_2:
+                continue
+            # Break the loop if the row indicates the end of the section
+            elif made_in_taiwan or made_in_china:
+                if col_1 == 'TOTAL: ' or col_2 == 'TOTAL: ':
+                    break
 
             # Check if the row contains headers
             elif col_1 in headers:
