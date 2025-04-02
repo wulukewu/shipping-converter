@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.3](https://github.com/wulukewu/shipping-converter/compare/v1.15.2...v1.15.3) (2025-04-02)
+
+
+### Bug Fixes
+
+* determine free_sample_qty_desc for ctn on DTJ_H ([cfe424b](https://github.com/wulukewu/shipping-converter/commit/cfe424bf84f0310ee4d34c90ea9086bbb96c7895))
+
 ## [1.15.2](https://github.com/wulukewu/shipping-converter/compare/v1.15.1...v1.15.2) (2025-03-16)
 
 
