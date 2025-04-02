@@ -325,10 +325,12 @@ def organize_data(filename):
                         if 'free sample' in desc_goods:
                             if pcs_per_set > 1:
                                 pcs_per_set_desc = f' ({pcs_per_set}pcs/set)'
+                                free_sample_qty_desc = 'SET'
                             else:
                                 pcs_per_set_desc = ''
+                                free_sample_qty_desc = 'PCS'
                             free_sample_qty = hm_sheet.cell(row=j_ctn, column=7).value
-                            ctn_sheet.cell(row=k, column=1).value = f'{goods}{pcs_per_set_desc}\n({free_sample_qty}SET-free sample)'
+                            ctn_sheet.cell(row=k, column=1).value = f'{goods}{pcs_per_set_desc}\n({free_sample_qty}{free_sample_qty_desc}-free sample)'
                             j_ctn += 1
                             k += 1
                             break
