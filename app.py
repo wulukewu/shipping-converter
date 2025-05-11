@@ -12,7 +12,7 @@ import scripts.DTJ_H as DTJ_H
 import scripts.YONG_LAING as YONG_LAING
 import scripts.YONG_LAING_desc as YONG_LAING_desc
 import scripts.VLI as VLI
-
+import scripts.ASECL as ASECL
 app = Flask(__name__)
 
 # Configure upload folder and allowed file types
@@ -394,6 +394,69 @@ def upload_file_vli():
     # Render the upload page with the message if available
     return render_template('VLI.html', message=message)
 
+
+@app.route('/ASECL', methods=['GET', 'POST'])
+def upload_file_asecl():
+    """Handles file upload and processing for ASECL."""
+    message = None
+    if request.method == 'POST':
+        # Check if a file was included in the request
+        if 'file' not in request.files:
+            message = "No file part in the request."
+            return render_template('ASECL.html', message=message)
+
+        file = request.files['file']
+
+        # Check if a file was selected
+        if file.filename == '':
+            message = "No file selected."
+            return render_template('ASECL.html', message=message)
+
+        # Check if the file extension is allowed
+        if file and allowed_file(file.filename):
+            try:
+                # Unquote the filename to handle URL-encoded characters
+                filename = unquote(file.filename)
+
+                # Sanitize the filename using secure_filename
+                safe_filename = secure_filename(filename)
+
+                # Construct the full file path for saving
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
+
+                # Save the uploaded file
+                file.save(filepath)
+
+                # Convert xls to xlsx if needed
+                if filename.lower().endswith('.xls'):
+                    xlsx_filename = os.path.splitext(filepath)[0] + '.xlsx'
+                    if ASECL.convert_xls_to_xlsx(filepath, xlsx_filename):
+                        ASECL.organize_data(xlsx_filename)
+                else:
+                    ASECL.organize_data(filepath)
+
+                # Extract the base name and extension from the original filename
+                base_name, extension = os.path.splitext(filename)
+
+                # Construct the processed filename
+                processed_filename = f"{base_name} (processed){extension}"
+
+                # Construct the processed filepath
+                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
+
+                # Rename the processed file
+                os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
+
+                # Redirect to download the processed file
+                return redirect(url_for('download_file', name=quote(processed_filename)))
+
+            except Exception as e:
+                message = f"An error occurred during processing: {e}"
+                if discord_token and discord_guild_id and discord_channel_id:
+                    dc_send(f"[ASECL] {filename}\n{message}", discord_token, discord_guild_id, discord_channel_id)
+
+    # Render the upload page with the message if available
+    return render_template('ASECL.html', message=message)
 
 @app.route('/uploads/<name>')
 def download_file(name):
