@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.0](https://github.com/wulukewu/shipping-converter/compare/v1.15.3...v1.16.0) (2025-05-11)
+
+
+### Features
+
+* ASECL ([d6456eb](https://github.com/wulukewu/shipping-converter/commit/d6456ebba2c46648bddb329286ff3cbc96f6f541))
+
 ## [1.15.3](https://github.com/wulukewu/shipping-converter/compare/v1.15.2...v1.15.3) (2025-04-02)
 
 
