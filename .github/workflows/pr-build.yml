@@ -44,19 +44,12 @@ jobs:
           tags: |
             type=raw,value=pr-${{ github.event.pull_request.number }}
 
-      - name: Build and push Docker image to GitHub Container Registry
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Build and push Docker image to Docker Hub
+      - name: Build and push Docker image to both registries
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
           tags: |
+            ${{ env.GHCR_REGISTRY }}/${{ env.IMAGE_NAME }}:pr-${{ github.event.pull_request.number }}
             ${{ env.DOCKERHUB_REGISTRY }}/wulukewu/shipping-converter:pr-${{ github.event.pull_request.number }}
           labels: ${{ steps.meta.outputs.labels }}
