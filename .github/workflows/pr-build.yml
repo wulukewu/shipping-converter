@@ -8,6 +8,7 @@ env:
   GHCR_REGISTRY: ghcr.io
   DOCKERHUB_REGISTRY: docker.io
   IMAGE_NAME: ${{ github.repository }}
+  DOCKERHUB_IMAGE_NAME: wulukewu/shipping-converter
 
 jobs:
   build-and-push-image:
@@ -51,5 +52,5 @@ jobs:
           push: true
           tags: |
             ${{ env.GHCR_REGISTRY }}/${{ env.IMAGE_NAME }}:pr-${{ github.event.pull_request.number }}
-            ${{ env.DOCKERHUB_REGISTRY }}/wulukewu/shipping-converter:pr-${{ github.event.pull_request.number }}
+            ${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE_NAME }}:pr-${{ github.event.pull_request.number }}
           labels: ${{ steps.meta.outputs.labels }}
