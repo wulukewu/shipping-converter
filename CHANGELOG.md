@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.3](https://github.com/wulukewu/shipping-converter/compare/v1.16.2...v1.16.3) (2025-06-26)
+
+
+### Bug Fixes
+
+* fix build tag ([#37](https://github.com/wulukewu/shipping-converter/issues/37)) ([e76f784](https://github.com/wulukewu/shipping-converter/commit/e76f7849a1ef57213b46ac1c5ef75cd31cc458bf))
+
 ## [1.16.2](https://github.com/wulukewu/shipping-converter/compare/v1.16.1...v1.16.2) (2025-06-26)
 
 
