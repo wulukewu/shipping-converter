@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.1](https://github.com/wulukewu/shipping-converter/compare/v1.16.0...v1.16.1) (2025-06-26)
+
+
+### Bug Fixes
+
+* remove try/except block in functions to return debug error messages ([#33](https://github.com/wulukewu/shipping-converter/issues/33)) ([56812c5](https://github.com/wulukewu/shipping-converter/commit/56812c5f4a0c53efd7d4abe36a54dda1ad1b75cd))
+
 ## [1.16.0](https://github.com/wulukewu/shipping-converter/compare/v1.15.3...v1.16.0) (2025-05-11)
 
 
