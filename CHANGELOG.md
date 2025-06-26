@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.2](https://github.com/wulukewu/shipping-converter/compare/v1.16.1...v1.16.2) (2025-06-26)
+
+
+### Bug Fixes
+
+* safety check exceeds excel's row limit ([#34](https://github.com/wulukewu/shipping-converter/issues/34)) ([e7a7c72](https://github.com/wulukewu/shipping-converter/commit/e7a7c728e813e5d160d411292cc2f8f8eb5e88a5))
+
 ## [1.16.1](https://github.com/wulukewu/shipping-converter/compare/v1.16.0...v1.16.1) (2025-06-26)
 
 
