@@ -5,6 +5,7 @@ from werkzeug.utils import secure_filename
 from urllib.parse import unquote, quote
 import discord
 from dotenv import load_dotenv
+from datetime import datetime
 
 # Import the scripts for processing the data
 import scripts.Unictron as Unictron
@@ -71,6 +72,118 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+def generate_timestamped_filename(original_filename):
+    """Generate a filename with timestamp prefix."""
+    # Get current timestamp in format: YYYYMMDD_HHMMSS
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    
+    # Sanitize the original filename
+    safe_filename = secure_filename(original_filename)
+    
+    # Split filename and extension
+    name, ext = os.path.splitext(safe_filename)
+    
+    # Return timestamped filename
+    return f"{timestamp}_{name}{ext}"
+
+
+def validate_file_upload(request):
+    """Validate file upload request and return error message if any."""
+    if 'file' not in request.files:
+        return "No file part in the request."
+    
+    file = request.files['file']
+    if file.filename == '':
+        return "No file selected."
+    
+    if not allowed_file(file.filename):
+        return "File type not allowed."
+    
+    return None
+
+
+def save_uploaded_file(file, filename, timestamp):
+    """Save uploaded file with timestamped filename."""
+    timestamped_filename = f"{timestamp}_{secure_filename(filename)}"
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], timestamped_filename)
+    file.save(filepath)
+    return filepath, timestamped_filename
+
+
+def process_excel_file(filepath, filename, processor_module):
+    """Process Excel file with the given processor module."""
+    if filename.lower().endswith('.xls'):
+        xlsx_filename = os.path.splitext(filepath)[0] + '.xlsx'
+        if processor_module.convert_xls_to_xlsx(filepath, xlsx_filename):
+            processor_module.organize_data(xlsx_filename)
+    else:
+        processor_module.organize_data(filepath)
+
+
+def create_processed_filename(base_name, timestamp, extension='.xlsx'):
+    """Create processed filename with timestamp for uploads folder."""
+    return f"{timestamp}_{base_name}_processed{extension}"
+
+
+def handle_file_processing_error(error, filename, processor_name):
+    """Handle processing errors and send Discord notification if configured."""
+    message = f"An error occurred during processing: {error}"
+    if discord_token and discord_guild_id and discord_channel_id:
+        dc_send(f"[{processor_name}] {filename}\n{message}", discord_token, discord_guild_id, discord_channel_id)
+    return message
+
+
+def process_upload_request(request, processor_module, processor_name, template_name, output_extension='.xlsx'):
+    """Generic function to handle file upload and processing."""
+    message = None
+    if request.method == 'POST':
+        # Validate file upload
+        error_message = validate_file_upload(request)
+        if error_message:
+            return render_template(template_name, message=error_message)
+
+        file = request.files['file']
+        filename = unquote(file.filename)
+
+        try:
+            # Generate timestamp once for this upload session
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+            # Save uploaded file
+            filepath, timestamped_filename = save_uploaded_file(file, filename, timestamp)
+
+            # Process the file
+            if processor_name == 'YONG_LAING_desc':
+                # Special handling for YONG_LAING_desc (outputs .txt)
+                txt_filename = os.path.splitext(filepath)[0] + '.txt'
+                processor_module.read_xlsx_and_output_txt(filepath, txt_filename)
+                
+                base_name, _ = os.path.splitext(filename)
+                processed_filename_uploads = create_processed_filename(base_name, timestamp, '.txt')
+                processed_filename_download = f"{base_name}_processed.txt"
+                
+                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename_uploads)
+                os.rename(txt_filename, processed_filepath)
+            else:
+                # Standard Excel processing
+                process_excel_file(filepath, filename, processor_module)
+                
+                base_name, _ = os.path.splitext(filename)
+                processed_filename_uploads = create_processed_filename(base_name, timestamp, output_extension)
+                processed_filename_download = f"{base_name}_processed{output_extension}"
+                
+                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename_uploads)
+                os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
+
+            # Redirect to download
+            return redirect(url_for('download_file', name=processed_filename_uploads, download_name=processed_filename_download))
+
+        except Exception as e:
+            message = handle_file_processing_error(e, filename, processor_name)
+
+    return render_template(template_name, message=message)
+
+
 @app.route('/')
 def index():
     """Renders the index page."""
@@ -80,388 +193,44 @@ def index():
 @app.route('/Unictron', methods=['GET', 'POST'])
 def upload_file_unictron():
     """Handles file upload and processing for Unictron."""
-    message = None
-    if request.method == 'POST':
-        # Check if a file was included in the request
-        if 'file' not in request.files:
-            message = "No file part in the request."
-            return render_template('Unictron.html', message=message)
-
-        file = request.files['file']
-
-        # Check if a file was selected
-        if file.filename == '':
-            message = "No file selected."
-            return render_template('Unictron.html', message=message)
-
-        # Check if the file extension is allowed
-        if file and allowed_file(file.filename):
-            try:
-                # Unquote the filename to handle URL-encoded characters
-                filename = unquote(file.filename)
-
-                # Sanitize the filename using secure_filename
-                safe_filename = secure_filename(filename)
-
-                # Construct the full file path for saving
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
-
-                # Save the uploaded file
-                file.save(filepath)
-
-                # Convert xls to xlsx if needed
-                if filename.lower().endswith('.xls'):
-                    xlsx_filename = os.path.splitext(filepath)[0] + '.xlsx'
-                    if Unictron.convert_xls_to_xlsx(filepath, xlsx_filename):
-                        Unictron.organize_data(xlsx_filename)
-                else:
-                    Unictron.organize_data(filepath)
-
-                # Extract the base name and extension from the original filename
-                base_name, extension = os.path.splitext(filename)
-
-                # Construct the processed filename
-                processed_filename = f"{base_name} (processed){extension}"
-
-                # Construct the processed filepath
-                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
-
-                # Rename the processed file
-                os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
-
-                # Redirect to download the processed file
-                return redirect(url_for('download_file', name=quote(processed_filename)))
-
-            except Exception as e:
-                message = f"An error occurred during processing: {e}"
-                if discord_token and discord_guild_id and discord_channel_id:
-                    dc_send(f"[Unictron] {filename}\n{message}", discord_token, discord_guild_id, discord_channel_id)
-
-    # Render the upload page with the message if available
-    return render_template('Unictron.html', message=message)
+    return process_upload_request(request, Unictron, 'Unictron', 'Unictron.html')
 
 
 @app.route('/DTJ_H', methods=['GET', 'POST'])
 def upload_file_dtj_h():
     """Handles file upload and processing for DTJ_H."""
-    message = None
-    if request.method == 'POST':
-        # Check if a file was included in the request
-        if 'file' not in request.files:
-            message = "No file part in the request."
-            return render_template('DTJ_H.html', message=message)
-
-        file = request.files['file']
-
-        # Check if a file was selected
-        if file.filename == '':
-            message = "No file selected."
-            return render_template('DTJ_H.html', message=message)
-
-        # Check if the file extension is allowed
-        if file and allowed_file(file.filename):
-            try:
-                # Unquote the filename to handle URL-encoded characters
-                filename = unquote(file.filename)
-
-                # Sanitize the filename using secure_filename
-                safe_filename = secure_filename(filename)
-
-                # Construct the full file path for saving
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
-
-                # Save the uploaded file
-                file.save(filepath)
-
-                # Convert xls to xlsx if needed
-                if filename.lower().endswith('.xls'):
-                    xlsx_filename = os.path.splitext(filepath)[0] + '.xlsx'
-                    if DTJ_H.convert_xls_to_xlsx(filepath, xlsx_filename):
-                        DTJ_H.organize_data(xlsx_filename)
-                else:
-                    DTJ_H.organize_data(filepath)
-
-                # Extract the base name and extension from the original filename
-                base_name, extension = os.path.splitext(filename)
-
-                # Construct the processed filename
-                processed_filename = f"{base_name} (processed).xlsx"
-
-                # Construct the processed filepath
-                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
-
-                # Rename the processed file
-                os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
-
-                # Redirect to download the processed file
-                return redirect(url_for('download_file', name=quote(processed_filename)))
-
-            except Exception as e:
-                message = f"An error occurred during processing: {e}"
-                if discord_token and discord_guild_id and discord_channel_id:
-                    dc_send(f"[DTJ_H] {filename}\n{message}", discord_token, discord_guild_id, discord_channel_id)
-
-    # Render the upload page with the message if available
-    return render_template('DTJ_H.html', message=message)
+    return process_upload_request(request, DTJ_H, 'DTJ_H', 'DTJ_H.html')
 
 
 @app.route('/YONG_LAING', methods=['GET', 'POST'])
 def upload_file_yong_laing():
     """Handles file upload and processing for YONG_LAING."""
-    message = None
-    if request.method == 'POST':
-        # Check if a file was included in the request
-        if 'file' not in request.files:
-            message = "No file part in the request."
-            return render_template('YONG_LAING.html', message=message)
-
-        file = request.files['file']
-
-        # Check if a file was selected
-        if file.filename == '':
-            message = "No file selected."
-            return render_template('YONG_LAING.html', message=message)
-
-        # Check if the file extension is allowed
-        if file and allowed_file(file.filename):
-            try:
-                # Unquote the filename to handle URL-encoded characters
-                filename = unquote(file.filename)
-
-                # Sanitize the filename using secure_filename
-                safe_filename = secure_filename(filename)
-
-                # Construct the full file path for saving
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
-
-                # Save the uploaded file
-                file.save(filepath)
-
-                # Convert xls to xlsx if needed
-                if filename.lower().endswith('.xls'):
-                    xlsx_filename = os.path.splitext(filepath)[0] + '.xlsx'
-                    if YONG_LAING.convert_xls_to_xlsx(filepath, xlsx_filename):
-                        YONG_LAING.organize_data(xlsx_filename)
-                else:
-                    YONG_LAING.organize_data(filepath)
-
-                # Extract the base name and extension from the original filename
-                base_name, extension = os.path.splitext(filename)
-
-                # Construct the processed filename
-                processed_filename = f"{base_name} (processed){extension}"
-
-                # Construct the processed filepath
-                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
-
-                # Rename the processed file
-                os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
-
-                # Redirect to download the processed file
-                return redirect(url_for('download_file', name=quote(processed_filename)))
-
-            except Exception as e:
-                message = f"An error occurred during processing: {e}"
-                if discord_token and discord_guild_id and discord_channel_id:
-                    dc_send(f"[YONG_LAING] {filename}\n{message}", discord_token, discord_guild_id, discord_channel_id)
-
-    # Render the upload page with the message if available
-    return render_template('YONG_LAING.html', message=message)
+    return process_upload_request(request, YONG_LAING, 'YONG_LAING', 'YONG_LAING.html')
 
 
 @app.route('/YONG_LAING_desc', methods=['GET', 'POST'])
 def upload_file_yong_laing_desc():
     """Handles file upload and processing for YONG_LAING_desc."""
-    message = None
-    if request.method == 'POST':
-        # Check if a file was included in the request
-        if 'file' not in request.files:
-            message = "No file part in the request."
-            return render_template('YONG_LAING_desc.html', message=message)
-
-        file = request.files['file']
-
-        # Check if a file was selected
-        if file.filename == '':
-            message = "No file selected."
-            return render_template('YONG_LAING_desc.html', message=message)
-
-        # Check if the file extension is allowed
-        if file and allowed_file(file.filename):
-            try:
-                # Unquote the filename to handle URL-encoded characters
-                filename = unquote(file.filename)
-
-                # Sanitize the filename using secure_filename
-                safe_filename = secure_filename(filename)
-
-                # Construct the full file path for saving
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
-
-                # Save the uploaded file
-                file.save(filepath)
-
-                # Construct the output txt filename for the processing
-                txt_filename = os.path.splitext(filepath)[0] + '.txt'
-
-                # Process the data from the file
-                YONG_LAING_desc.read_xlsx_and_output_txt(filepath, txt_filename)
-
-                # Extract the base name and extension from the original filename
-                base_name, extension = os.path.splitext(filename)
-
-                # Construct the processed filename
-                processed_filename = f"{base_name} (processed).txt"
-
-                # Construct the processed filepath
-                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
-
-                # Rename the file
-                os.rename(txt_filename, processed_filepath)
-
-                # Redirect to download the processed file
-                return redirect(url_for('download_file', name=quote(processed_filename)))
-
-            except Exception as e:
-                message = f"An error occurred during processing: {e}"
-                if discord_token and discord_guild_id and discord_channel_id:
-                    dc_send(f"[YONG_LAING_desc] {filename}\n{message}", discord_token, discord_guild_id, discord_channel_id)
-
-    # Render the upload page with the message if available
-    return render_template('YONG_LAING_desc.html', message=message)
+    return process_upload_request(request, YONG_LAING_desc, 'YONG_LAING_desc', 'YONG_LAING_desc.html', '.txt')
 
 
 @app.route('/VLI', methods=['GET', 'POST'])
 def upload_file_vli():
     """Handles file upload and processing for VLI."""
-    message = None
-    if request.method == 'POST':
-        # Check if a file was included in the request
-        if 'file' not in request.files:
-            message = "No file part in the request."
-            return render_template('VLI.html', message=message)
-
-        file = request.files['file']
-
-        # Check if a file was selected
-        if file.filename == '':
-            message = "No file selected."
-            return render_template('VLI.html', message=message)
-
-        # Check if the file extension is allowed
-        if file and allowed_file(file.filename):
-            try:
-                # Unquote the filename to handle URL-encoded characters
-                filename = unquote(file.filename)
-
-                # Sanitize the filename using secure_filename
-                safe_filename = secure_filename(filename)
-
-                # Construct the full file path for saving
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
-
-                # Save the uploaded file
-                file.save(filepath)
-
-                # Convert xls to xlsx if needed
-                if filename.lower().endswith('.xls'):
-                    xlsx_filename = os.path.splitext(filepath)[0] + '.xlsx'
-                    if VLI.convert_xls_to_xlsx(filepath, xlsx_filename):
-                        VLI.organize_data(xlsx_filename)
-                else:
-                    VLI.organize_data(filepath)
-
-                # Extract the base name and extension from the original filename
-                base_name, extension = os.path.splitext(filename)
-
-                # Construct the processed filename
-                processed_filename = f"{base_name} (processed){extension}"
-
-                # Construct the processed filepath
-                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
-
-                # Rename the processed file
-                os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
-
-                # Redirect to download the processed file
-                return redirect(url_for('download_file', name=quote(processed_filename)))
-
-            except Exception as e:
-                message = f"An error occurred during processing: {e}"
-                if discord_token and discord_guild_id and discord_channel_id:
-                    dc_send(f"[VLI] {filename}\n{message}", discord_token, discord_guild_id, discord_channel_id)
-
-    # Render the upload page with the message if available
-    return render_template('VLI.html', message=message)
+    return process_upload_request(request, VLI, 'VLI', 'VLI.html')
 
 
 @app.route('/ASECL', methods=['GET', 'POST'])
 def upload_file_asecl():
     """Handles file upload and processing for ASECL."""
-    message = None
-    if request.method == 'POST':
-        # Check if a file was included in the request
-        if 'file' not in request.files:
-            message = "No file part in the request."
-            return render_template('ASECL.html', message=message)
+    return process_upload_request(request, ASECL, 'ASECL', 'ASECL.html')
 
-        file = request.files['file']
 
-        # Check if a file was selected
-        if file.filename == '':
-            message = "No file selected."
-            return render_template('ASECL.html', message=message)
-
-        # Check if the file extension is allowed
-        if file and allowed_file(file.filename):
-            try:
-                # Unquote the filename to handle URL-encoded characters
-                filename = unquote(file.filename)
-
-                # Sanitize the filename using secure_filename
-                safe_filename = secure_filename(filename)
-
-                # Construct the full file path for saving
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
-
-                # Save the uploaded file
-                file.save(filepath)
-
-                # Convert xls to xlsx if needed
-                if filename.lower().endswith('.xls'):
-                    xlsx_filename = os.path.splitext(filepath)[0] + '.xlsx'
-                    if ASECL.convert_xls_to_xlsx(filepath, xlsx_filename):
-                        ASECL.organize_data(xlsx_filename)
-                else:
-                    ASECL.organize_data(filepath)
-
-                # Extract the base name and extension from the original filename
-                base_name, extension = os.path.splitext(filename)
-
-                # Construct the processed filename
-                processed_filename = f"{base_name} (processed){extension}"
-
-                # Construct the processed filepath
-                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
-
-                # Rename the processed file
-                os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
-
-                # Redirect to download the processed file
-                return redirect(url_for('download_file', name=quote(processed_filename)))
-
-            except Exception as e:
-                message = f"An error occurred during processing: {e}"
-                if discord_token and discord_guild_id and discord_channel_id:
-                    dc_send(f"[ASECL] {filename}\n{message}", discord_token, discord_guild_id, discord_channel_id)
-
-    # Render the upload page with the message if available
-    return render_template('ASECL.html', message=message)
-
-@app.route('/uploads/<name>')
+@app.route(f'/{UPLOAD_FOLDER}/<name>')
 def download_file(name):
     """Sends the processed file to the user for download."""
-    return send_from_directory(app.config["UPLOAD_FOLDER"], unquote(name), as_attachment=True)
+    download_name = request.args.get('download_name', name)
+    return send_from_directory(app.config["UPLOAD_FOLDER"], unquote(name), as_attachment=True, download_name=download_name)
 
 
 if __name__ == '__main__':
