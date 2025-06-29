@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.4](https://github.com/wulukewu/shipping-converter/compare/v1.16.3...v1.16.4) (2025-06-29)
+
+
+### Bug Fixes
+
+* Revert ctn group bug and space format detection ([#39](https://github.com/wulukewu/shipping-converter/issues/39)) ([a74aca1](https://github.com/wulukewu/shipping-converter/commit/a74aca191cf955c77c9738edea7e0536c1781b20))
+
 ## [1.16.3](https://github.com/wulukewu/shipping-converter/compare/v1.16.2...v1.16.3) (2025-06-26)
 
 
