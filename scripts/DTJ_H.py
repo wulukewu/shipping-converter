@@ -4,6 +4,19 @@ import re
 import xlrd
 import os
 
+def normalize_format(text):
+    """
+    Normalizes the format by adding a space before parentheses if it's missing.
+    Example: "TCED-8038(dvd jacket)" becomes "TCED-8038 (dvd jacket)"
+    """
+    if not text:
+        return text
+    
+    # Use regex to add space before opening parenthesis if it's missing
+    # This matches a pattern like "TCED-8038(dvd jacket)" and adds space before "("
+    normalized = re.sub(r'([A-Z0-9-])\s*\(', r'\1 (', str(text))
+    return normalized
+
 def convert_xls_to_xlsx(xls_filename, xlsx_filename):
     """
     Converts an XLS file to XLSX format.
@@ -310,16 +323,19 @@ def organize_data(filename):
         if not ctn or str(ctn).strip() == "":
             continue
 
+        # Normalize the ctn format
+        ctn = normalize_format(ctn)
+
         # print(f'CTN: {ctn}, QTY: {qty}, Net Weight: {net_weight}, Gross Weight: {gross_weight}')
 
         if qty is None or 'pallet' in str(ctn).lower():
-            goods_tmp = hm_sheet.cell(row=i + 1, column=1).value.split(' ')[0]
+            goods_tmp = normalize_format(hm_sheet.cell(row=i + 1, column=1).value).split(' ')[0]
             if goods is None:
                 goods = goods_tmp
             elif goods != goods_tmp:
                 pcs_per_set = 0
                 while True:
-                    desc_goods = str(hm_sheet.cell(row=j_ctn, column=1).value)
+                    desc_goods = normalize_format(str(hm_sheet.cell(row=j_ctn, column=1).value))
                     # print(f'Goods: {goods}, Desc: {desc_goods}')
                     if 'free sample' in desc_goods:
                         if pcs_per_set > 1:
