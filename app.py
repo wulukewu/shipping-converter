@@ -226,7 +226,7 @@ def upload_file_asecl():
     return process_upload_request(request, ASECL, 'ASECL', 'ASECL.html')
 
 
-@app.route('/uploads/<name>')
+@app.route(f'/{UPLOAD_FOLDER}/<name>')
 def download_file(name):
     """Sends the processed file to the user for download."""
     download_name = request.args.get('download_name', name)
