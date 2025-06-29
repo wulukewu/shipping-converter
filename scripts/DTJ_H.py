@@ -4,19 +4,6 @@ import re
 import xlrd
 import os
 
-def normalize_format(text):
-    """
-    Normalizes the format by adding a space before parentheses if it's missing.
-    Example: "TCED-8038(dvd jacket)" becomes "TCED-8038 (dvd jacket)"
-    """
-    if not text:
-        return text
-    
-    # Use regex to add space before opening parenthesis if it's missing
-    # This matches a pattern like "TCED-8038(dvd jacket)" and adds space before "("
-    normalized = re.sub(r'([A-Z0-9-])\s*\(', r'\1 (', str(text))
-    return normalized
-
 def convert_xls_to_xlsx(xls_filename, xlsx_filename):
     """
     Converts an XLS file to XLSX format.
@@ -277,6 +264,20 @@ def organize_data(filename):
     # =====================================
     # CTN SHEET IMPLEMENTATION STARTS HERE
     # =====================================
+    
+    def normalize_format(text):
+        """
+        Normalizes the format by adding a space before parentheses if it's missing.
+        Example: "TCED-8038(dvd jacket)" becomes "TCED-8038 (dvd jacket)"
+        """
+        if not text:
+            return text
+        
+        # Use regex to add space before opening parenthesis if it's missing
+        # This matches a pattern like "TCED-8038(dvd jacket)" and adds space before "("
+        normalized = re.sub(r'([A-Z0-9-])\s*\(', r'\1 (', str(text))
+        return normalized
+    
     found_start_ctn = False
     found_end_ctn = False
     start_row_ctn = 0
