@@ -5,6 +5,7 @@ from werkzeug.utils import secure_filename
 from urllib.parse import unquote, quote
 import discord
 from dotenv import load_dotenv
+from datetime import datetime
 
 # Import the scripts for processing the data
 import scripts.Unictron as Unictron
@@ -71,6 +72,21 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+def generate_timestamped_filename(original_filename):
+    """Generate a filename with timestamp prefix."""
+    # Get current timestamp in format: YYYYMMDD_HHMMSS
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    
+    # Sanitize the original filename
+    safe_filename = secure_filename(original_filename)
+    
+    # Split filename and extension
+    name, ext = os.path.splitext(safe_filename)
+    
+    # Return timestamped filename
+    return f"{timestamp}_{name}{ext}"
+
+
 @app.route('/')
 def index():
     """Renders the index page."""
@@ -100,11 +116,14 @@ def upload_file_unictron():
                 # Unquote the filename to handle URL-encoded characters
                 filename = unquote(file.filename)
 
-                # Sanitize the filename using secure_filename
-                safe_filename = secure_filename(filename)
+                # Generate timestamp once for this upload session
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+                # Generate timestamped filename
+                timestamped_filename = f"{timestamp}_{secure_filename(filename)}"
 
                 # Construct the full file path for saving
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], timestamped_filename)
 
                 # Save the uploaded file
                 file.save(filepath)
@@ -119,18 +138,21 @@ def upload_file_unictron():
 
                 # Extract the base name and extension from the original filename
                 base_name, extension = os.path.splitext(filename)
+                
+                # Construct the processed filename for uploads folder (with same timestamp)
+                processed_filename_uploads = f"{timestamp}_{base_name}_processed.xlsx"
+                
+                # Construct the processed filename for download (without timestamp)
+                processed_filename_download = f"{base_name}_processed.xlsx"
 
-                # Construct the processed filename
-                processed_filename = f"{base_name} (processed){extension}"
-
-                # Construct the processed filepath
-                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
+                # Construct the processed filepath for uploads folder
+                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename_uploads)
 
                 # Rename the processed file
                 os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
 
-                # Redirect to download the processed file
-                return redirect(url_for('download_file', name=quote(processed_filename)))
+                # Redirect to download the processed file with custom filename
+                return redirect(url_for('download_file', name=processed_filename_uploads, download_name=processed_filename_download))
 
             except Exception as e:
                 message = f"An error occurred during processing: {e}"
@@ -164,11 +186,14 @@ def upload_file_dtj_h():
                 # Unquote the filename to handle URL-encoded characters
                 filename = unquote(file.filename)
 
-                # Sanitize the filename using secure_filename
-                safe_filename = secure_filename(filename)
+                # Generate timestamp once for this upload session
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+                # Generate timestamped filename
+                timestamped_filename = f"{timestamp}_{secure_filename(filename)}"
 
                 # Construct the full file path for saving
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], timestamped_filename)
 
                 # Save the uploaded file
                 file.save(filepath)
@@ -183,18 +208,21 @@ def upload_file_dtj_h():
 
                 # Extract the base name and extension from the original filename
                 base_name, extension = os.path.splitext(filename)
+                
+                # Construct the processed filename for uploads folder (with same timestamp)
+                processed_filename_uploads = f"{timestamp}_{base_name}_processed.xlsx"
+                
+                # Construct the processed filename for download (without timestamp)
+                processed_filename_download = f"{base_name}_processed.xlsx"
 
-                # Construct the processed filename
-                processed_filename = f"{base_name} (processed).xlsx"
-
-                # Construct the processed filepath
-                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
+                # Construct the processed filepath for uploads folder
+                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename_uploads)
 
                 # Rename the processed file
                 os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
 
-                # Redirect to download the processed file
-                return redirect(url_for('download_file', name=quote(processed_filename)))
+                # Redirect to download the processed file with custom filename
+                return redirect(url_for('download_file', name=processed_filename_uploads, download_name=processed_filename_download))
 
             except Exception as e:
                 message = f"An error occurred during processing: {e}"
@@ -228,11 +256,14 @@ def upload_file_yong_laing():
                 # Unquote the filename to handle URL-encoded characters
                 filename = unquote(file.filename)
 
-                # Sanitize the filename using secure_filename
-                safe_filename = secure_filename(filename)
+                # Generate timestamp once for this upload session
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+                # Generate timestamped filename
+                timestamped_filename = f"{timestamp}_{secure_filename(filename)}"
 
                 # Construct the full file path for saving
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], timestamped_filename)
 
                 # Save the uploaded file
                 file.save(filepath)
@@ -247,18 +278,21 @@ def upload_file_yong_laing():
 
                 # Extract the base name and extension from the original filename
                 base_name, extension = os.path.splitext(filename)
+                
+                # Construct the processed filename for uploads folder (with same timestamp)
+                processed_filename_uploads = f"{timestamp}_{base_name}_processed.xlsx"
+                
+                # Construct the processed filename for download (without timestamp)
+                processed_filename_download = f"{base_name}_processed.xlsx"
 
-                # Construct the processed filename
-                processed_filename = f"{base_name} (processed){extension}"
-
-                # Construct the processed filepath
-                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
+                # Construct the processed filepath for uploads folder
+                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename_uploads)
 
                 # Rename the processed file
                 os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
 
-                # Redirect to download the processed file
-                return redirect(url_for('download_file', name=quote(processed_filename)))
+                # Redirect to download the processed file with custom filename
+                return redirect(url_for('download_file', name=processed_filename_uploads, download_name=processed_filename_download))
 
             except Exception as e:
                 message = f"An error occurred during processing: {e}"
@@ -292,11 +326,14 @@ def upload_file_yong_laing_desc():
                 # Unquote the filename to handle URL-encoded characters
                 filename = unquote(file.filename)
 
-                # Sanitize the filename using secure_filename
-                safe_filename = secure_filename(filename)
+                # Generate timestamp once for this upload session
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+                # Generate timestamped filename
+                timestamped_filename = f"{timestamp}_{secure_filename(filename)}"
 
                 # Construct the full file path for saving
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], timestamped_filename)
 
                 # Save the uploaded file
                 file.save(filepath)
@@ -309,18 +346,21 @@ def upload_file_yong_laing_desc():
 
                 # Extract the base name and extension from the original filename
                 base_name, extension = os.path.splitext(filename)
+                
+                # Construct the processed filename for uploads folder (with same timestamp)
+                processed_filename_uploads = f"{timestamp}_{base_name}_processed.txt"
+                
+                # Construct the processed filename for download (without timestamp)
+                processed_filename_download = f"{base_name}_processed.txt"
 
-                # Construct the processed filename
-                processed_filename = f"{base_name} (processed).txt"
-
-                # Construct the processed filepath
-                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
+                # Construct the processed filepath for uploads folder
+                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename_uploads)
 
                 # Rename the file
                 os.rename(txt_filename, processed_filepath)
 
-                # Redirect to download the processed file
-                return redirect(url_for('download_file', name=quote(processed_filename)))
+                # Redirect to download the processed file with custom filename
+                return redirect(url_for('download_file', name=processed_filename_uploads, download_name=processed_filename_download))
 
             except Exception as e:
                 message = f"An error occurred during processing: {e}"
@@ -354,11 +394,14 @@ def upload_file_vli():
                 # Unquote the filename to handle URL-encoded characters
                 filename = unquote(file.filename)
 
-                # Sanitize the filename using secure_filename
-                safe_filename = secure_filename(filename)
+                # Generate timestamp once for this upload session
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+                # Generate timestamped filename
+                timestamped_filename = f"{timestamp}_{secure_filename(filename)}"
 
                 # Construct the full file path for saving
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], timestamped_filename)
 
                 # Save the uploaded file
                 file.save(filepath)
@@ -373,18 +416,21 @@ def upload_file_vli():
 
                 # Extract the base name and extension from the original filename
                 base_name, extension = os.path.splitext(filename)
+                
+                # Construct the processed filename for uploads folder (with same timestamp)
+                processed_filename_uploads = f"{timestamp}_{base_name}_processed.xlsx"
+                
+                # Construct the processed filename for download (without timestamp)
+                processed_filename_download = f"{base_name}_processed.xlsx"
 
-                # Construct the processed filename
-                processed_filename = f"{base_name} (processed){extension}"
-
-                # Construct the processed filepath
-                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
+                # Construct the processed filepath for uploads folder
+                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename_uploads)
 
                 # Rename the processed file
                 os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
 
-                # Redirect to download the processed file
-                return redirect(url_for('download_file', name=quote(processed_filename)))
+                # Redirect to download the processed file with custom filename
+                return redirect(url_for('download_file', name=processed_filename_uploads, download_name=processed_filename_download))
 
             except Exception as e:
                 message = f"An error occurred during processing: {e}"
@@ -418,11 +464,14 @@ def upload_file_asecl():
                 # Unquote the filename to handle URL-encoded characters
                 filename = unquote(file.filename)
 
-                # Sanitize the filename using secure_filename
-                safe_filename = secure_filename(filename)
+                # Generate timestamp once for this upload session
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+                # Generate timestamped filename
+                timestamped_filename = f"{timestamp}_{secure_filename(filename)}"
 
                 # Construct the full file path for saving
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], timestamped_filename)
 
                 # Save the uploaded file
                 file.save(filepath)
@@ -437,18 +486,21 @@ def upload_file_asecl():
 
                 # Extract the base name and extension from the original filename
                 base_name, extension = os.path.splitext(filename)
+                
+                # Construct the processed filename for uploads folder (with same timestamp)
+                processed_filename_uploads = f"{timestamp}_{base_name}_processed.xlsx"
+                
+                # Construct the processed filename for download (without timestamp)
+                processed_filename_download = f"{base_name}_processed.xlsx"
 
-                # Construct the processed filename
-                processed_filename = f"{base_name} (processed){extension}"
-
-                # Construct the processed filepath
-                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
+                # Construct the processed filepath for uploads folder
+                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename_uploads)
 
                 # Rename the processed file
                 os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
 
-                # Redirect to download the processed file
-                return redirect(url_for('download_file', name=quote(processed_filename)))
+                # Redirect to download the processed file with custom filename
+                return redirect(url_for('download_file', name=processed_filename_uploads, download_name=processed_filename_download))
 
             except Exception as e:
                 message = f"An error occurred during processing: {e}"
@@ -461,7 +513,8 @@ def upload_file_asecl():
 @app.route('/uploads/<name>')
 def download_file(name):
     """Sends the processed file to the user for download."""
-    return send_from_directory(app.config["UPLOAD_FOLDER"], unquote(name), as_attachment=True)
+    download_name = request.args.get('download_name', name)
+    return send_from_directory(app.config["UPLOAD_FOLDER"], unquote(name), as_attachment=True, download_name=download_name)
 
 
 if __name__ == '__main__':
