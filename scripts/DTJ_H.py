@@ -264,6 +264,20 @@ def organize_data(filename):
     # =====================================
     # CTN SHEET IMPLEMENTATION STARTS HERE
     # =====================================
+    
+    def normalize_format(text):
+        """
+        Normalizes the format by adding a space before parentheses if it's missing.
+        Example: "TCED-8038(dvd jacket)" becomes "TCED-8038 (dvd jacket)"
+        """
+        if not text:
+            return text
+        
+        # Use regex to add space before opening parenthesis if it's missing
+        # This matches a pattern like "TCED-8038(dvd jacket)" and adds space before "("
+        normalized = re.sub(r'([A-Z0-9-])\s*\(', r'\1 (', str(text))
+        return normalized
+    
     found_start_ctn = False
     found_end_ctn = False
     start_row_ctn = 0
@@ -310,20 +324,19 @@ def organize_data(filename):
         if not ctn or str(ctn).strip() == "":
             continue
 
+        # Normalize the ctn format
+        ctn = normalize_format(ctn)
+
         # print(f'CTN: {ctn}, QTY: {qty}, Net Weight: {net_weight}, Gross Weight: {gross_weight}')
 
         if qty is None or 'pallet' in str(ctn).lower():
-            goods_tmp = hm_sheet.cell(row=i + 1, column=1).value.split(' ')[0]
+            goods_tmp = normalize_format(hm_sheet.cell(row=i + 1, column=1).value).split(' ')[0]
             if goods is None:
                 goods = goods_tmp
             elif goods != goods_tmp:
                 pcs_per_set = 0
                 while True:
-                    # Safety check: break if j_ctn exceeds the sheet's max row
-                    if j_ctn > last_row:
-                        print(f"Safety break: j_ctn ({j_ctn}) exceeded last_row ({last_row})")
-                        break
-                    desc_goods = str(hm_sheet.cell(row=j_ctn, column=1).value)
+                    desc_goods = normalize_format(str(hm_sheet.cell(row=j_ctn, column=1).value))
                     # print(f'Goods: {goods}, Desc: {desc_goods}')
                     if 'free sample' in desc_goods:
                         if pcs_per_set > 1:
@@ -333,10 +346,6 @@ def organize_data(filename):
                             pcs_per_set_desc = ''
                             free_sample_qty_desc = 'PCS'
                         free_sample_qty = hm_sheet.cell(row=j_ctn, column=7).value
-                        # Safety check: do not write if k exceeds Excel's row limit
-                        if k > 1048576:
-                            print(f"Row limit exceeded in ctn_sheet! k={k}")
-                            break
                         ctn_sheet.cell(row=k, column=1).value = f'{goods}{pcs_per_set_desc}\n({free_sample_qty}{free_sample_qty_desc}-free sample)'
                         j_ctn += 1
                         k += 1
@@ -347,27 +356,23 @@ def organize_data(filename):
                     else:
                         j_ctn += 1
 
-            ctn_no_list = []
-            for desc in desc_list:
-                if 'ctn no.HM' in desc:
-                    ctn_no_list.extend(list(map(int, desc.split(' ')[-1].split('-'))))
-            if len(ctn_no_list) > 1:
-                desc_list = [desc if 'ctn no.HM' not in desc else f"\n{desc}" for desc in desc_list]
-                for desc_idx in range(len(desc_list)):
-                    if '\n' in desc_list[desc_idx] and 'ctn no.HM' in desc_list[desc_idx]:
-                        desc_list[desc_idx] = desc_list[desc_idx].replace('\n', '')
-                        break
+                ctn_no_list = []
+                for desc in desc_list:
+                    if 'ctn no.HM' in desc:
+                        ctn_no_list.extend(list(map(int, desc.split(' ')[-1].split('-'))))
+                if len(ctn_no_list) > 1:
+                    desc_list = [desc if 'ctn no.HM' not in desc else f"\n{desc}" for desc in desc_list]
+                    for desc_idx in range(len(desc_list)):
+                        if '\n' in desc_list[desc_idx] and 'ctn no.HM' in desc_list[desc_idx]:
+                            desc_list[desc_idx] = desc_list[desc_idx].replace('\n', '')
+                            break
 
-                ctn_no_num = max(ctn_no_list) - min(ctn_no_list) + 1
-                desc_list.append(f'x {ctn_no_num}CTNS')
-            else:
-                desc_list = [desc for desc in desc_list if 'ctn no.HM' not in desc]
+                    ctn_no_num = max(ctn_no_list) - min(ctn_no_list) + 1
+                    desc_list.append(f'x {ctn_no_num}CTNS')
+                else:
+                    desc_list = [desc for desc in desc_list if 'ctn no.HM' not in desc]
 
                 desc = '\n'.join(desc_list).strip()
-                # Safety check: do not write if k exceeds Excel's row limit
-                if k > 1048576:
-                    print(f"Row limit exceeded in ctn_sheet! k={k}")
-                    break
                 ctn_sheet.cell(row=k, column=1).value = desc
                 k += 1
                 desc_list = []
