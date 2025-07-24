@@ -29,6 +29,7 @@
     <section>
         <h1>威鋒</h1>
         <form method="POST" enctype="multipart/form-data">
+            <span id="filenameDisplay" style="display:block;margin-bottom:8px;font-weight:bold;"></span>
             <label for="file-upload" class="custom-file-upload">
                 上傳文件
             </label>
@@ -49,5 +50,11 @@
             </div>
         </div>
     </section>
+    <script>
+        document.getElementById('file-upload').addEventListener('change', function(e) {
+            var fileName = e.target.files.length ? e.target.files[0].name : '';
+            document.getElementById('filenameDisplay').textContent = fileName;
+        });
+    </script>
 </body>
 </html>
