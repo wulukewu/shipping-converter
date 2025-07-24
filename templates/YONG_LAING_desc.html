@@ -55,5 +55,45 @@
             document.getElementById('filenameDisplay').textContent = fileName;
         });
     </script>
+
+    <!-- Dropzone Overlay -->
+    <div id="dropzoneOverlay" class="dropzone-overlay" style="display:none;">
+        <div class="dropzone-border">
+            <span class="dropzone-text">拖曳檔案到此處以上傳</span>
+        </div>
+    </div>
+    <script>
+    // Dropzone logic
+    const dropzoneOverlay = document.getElementById('dropzoneOverlay');
+    const fileInput = document.getElementById('file-upload');
+    let dropzoneActive = false;
+
+    function showDropzone() {
+        dropzoneOverlay.style.display = 'flex';
+        dropzoneActive = true;
+    }
+    function hideDropzone() {
+        dropzoneOverlay.style.display = 'none';
+        dropzoneActive = false;
+    }
+
+    window.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        if (!dropzoneActive) showDropzone();
+    });
+    window.addEventListener('dragleave', function(e) {
+        if (e.target === document.body || e.pageX <= 0 || e.pageY <= 0) {
+            hideDropzone();
+        }
+    });
+    window.addEventListener('drop', function(e) {
+        e.preventDefault();
+        hideDropzone();
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            fileInput.files = e.dataTransfer.files;
+            fileInput.dispatchEvent(new Event('change'));
+        }
+    });
+    </script>
 </body>
 </html>
