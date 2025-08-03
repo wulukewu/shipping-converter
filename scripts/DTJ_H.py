@@ -312,6 +312,7 @@ def organize_data(filename):
 
     desc_list = []
     goods = None
+    initial_j_ctn = j_ctn  # Store the initial position
 
     # Loop through the rows between the start and end rows in HM sheet
     for i in range(start_row_ctn, end_row_ctn + 1):
@@ -335,18 +336,55 @@ def organize_data(filename):
                 goods = goods_tmp
             elif goods != goods_tmp:
                 pcs_per_set = 0
+                j_ctn = initial_j_ctn  # Reset to initial position for new goods
+                
+                # First pass: count the number of items for this goods
+                temp_j_ctn = initial_j_ctn
+                sub_kind_count = 0
+                while True:
+                    desc_goods = normalize_format(str(hm_sheet.cell(row=temp_j_ctn, column=1).value))
+                    if 'free sample' in desc_goods and goods in desc_goods:
+                        break
+                    elif goods in desc_goods:
+                        # Get the kind value from column 10
+                        kind = hm_sheet.cell(row=temp_j_ctn, column=10).value
+                        if kind and kind.startswith("(") and kind.endswith(")"):
+                            kind = kind[1:-1]
+                        
+                        # Split the kind by commas
+                        sub_kinds = []
+                        if kind:
+                            sub_kinds = kind.split(",")
+                        
+                        # Count the items in this kind
+                        for sub_k in sub_kinds:
+                            sub_kind_without_multiplier = sub_k.strip()
+                            multiplier = 1
+                            if "x" in str(sub_k).lower():
+                                parts = re.split(r"x", sub_k, flags=re.IGNORECASE)
+                                if len(parts) == 2 and parts[1].isdigit():
+                                    multiplier = int(parts[1])
+                                    sub_kind_without_multiplier = sub_k.strip()
+                            sub_kind_count += multiplier
+                        temp_j_ctn += 1
+                    else:
+                        temp_j_ctn += 1
+                
+                # Second pass: find the free sample and use its quantity
                 while True:
                     desc_goods = normalize_format(str(hm_sheet.cell(row=j_ctn, column=1).value))
                     # print(f'Goods: {goods}, Desc: {desc_goods}')
-                    if 'free sample' in desc_goods:
-                        if pcs_per_set > 1:
-                            pcs_per_set_desc = f' ({pcs_per_set}pcs/set)'
+                    if 'free sample' in desc_goods and goods in desc_goods:
+                        # Use the original quantity from free sample row
+                        free_sample_qty = hm_sheet.cell(row=j_ctn, column=7).value
+                        
+                        # Determine unit based on sub_kind_count
+                        if sub_kind_count > 1:
                             free_sample_qty_desc = 'SET'
                         else:
-                            pcs_per_set_desc = ''
                             free_sample_qty_desc = 'PCS'
-                        free_sample_qty = hm_sheet.cell(row=j_ctn, column=7).value
-                        ctn_sheet.cell(row=k, column=1).value = f'{goods}{pcs_per_set_desc}\n({free_sample_qty}{free_sample_qty_desc}-free sample)'
+                        
+                        ctn_sheet.cell(row=k, column=1).value = f'{goods}\n({free_sample_qty}{free_sample_qty_desc}-free sample)'
                         j_ctn += 1
                         k += 1
                         break
