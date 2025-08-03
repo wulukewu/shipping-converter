@@ -9,6 +9,7 @@ from datetime import datetime
 
 # Import the scripts for processing the data
 import scripts.Unictron as Unictron
+import scripts.Unictron_2 as Unictron_2
 import scripts.DTJ_H as DTJ_H
 import scripts.YONG_LAING as YONG_LAING
 import scripts.YONG_LAING_desc as YONG_LAING_desc
@@ -194,6 +195,12 @@ def index():
 def upload_file_unictron():
     """Handles file upload and processing for Unictron."""
     return process_upload_request(request, Unictron, 'Unictron', 'Unictron.html')
+
+
+@app.route('/Unictron_2', methods=['GET', 'POST'])
+def upload_file_unictron_2():
+    """Handles file upload and processing for Unictron_2."""
+    return process_upload_request(request, Unictron_2, 'Unictron_2', 'Unictron_2.html')
 
 
 @app.route('/DTJ_H', methods=['GET', 'POST'])

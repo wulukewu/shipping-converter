@@ -1,0 +1,22 @@
+{
+  "ESD": {
+    "hs_code": "8541.10.90.00-9",
+    "description": "靜電保護元件"
+  },
+  "TVS": {
+    "hs_code": "8541.10.90.00-9", 
+    "description": "二極體"
+  },
+  "IC": {
+    "hs_code": "8542.39.00.22-8",
+    "description": "IC"
+  },
+  "GDT": {
+    "hs_code": "8535.40.20.00-6",
+    "description": "放電管"
+  },
+  "FUSE": {
+    "hs_code": "8536.10.00.00-5",
+    "description": "NA"
+  }
+} 
