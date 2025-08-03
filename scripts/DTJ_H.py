@@ -312,6 +312,7 @@ def organize_data(filename):
 
     desc_list = []
     goods = None
+    initial_j_ctn = j_ctn  # Store the initial position
 
     # Loop through the rows between the start and end rows in HM sheet
     for i in range(start_row_ctn, end_row_ctn + 1):
@@ -335,10 +336,11 @@ def organize_data(filename):
                 goods = goods_tmp
             elif goods != goods_tmp:
                 pcs_per_set = 0
+                j_ctn = initial_j_ctn  # Reset to initial position for new goods
                 while True:
                     desc_goods = normalize_format(str(hm_sheet.cell(row=j_ctn, column=1).value))
                     # print(f'Goods: {goods}, Desc: {desc_goods}')
-                    if 'free sample' in desc_goods:
+                    if 'free sample' in desc_goods and goods in desc_goods:
                         if pcs_per_set > 1:
                             pcs_per_set_desc = f' ({pcs_per_set}pcs/set)'
                             free_sample_qty_desc = 'SET'
