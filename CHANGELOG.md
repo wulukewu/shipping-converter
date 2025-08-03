@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.7](https://github.com/wulukewu/shipping-converter/compare/v1.16.6...v1.16.7) (2025-08-03)
+
+
+### Features
+
+* dropzone to upload files ([#43](https://github.com/wulukewu/shipping-converter/issues/43)) ([66be8f9](https://github.com/wulukewu/shipping-converter/commit/66be8f9a4006d2d921c40dea47d50b2cb11502aa))
+
 ## [1.16.6](https://github.com/wulukewu/shipping-converter/compare/v1.16.5...v1.16.6) (2025-08-03)
 
 
