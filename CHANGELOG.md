@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.6](https://github.com/wulukewu/shipping-converter/compare/v1.16.5...v1.16.6) (2025-08-03)
+
+
+### Bug Fixes
+
+* dtjh SET corrected ([#44](https://github.com/wulukewu/shipping-converter/issues/44)) ([738decf](https://github.com/wulukewu/shipping-converter/commit/738decf1ad60adc275ee5ca5b74cea36a723507b))
+
 ## [1.16.5](https://github.com/wulukewu/shipping-converter/compare/v1.16.4...v1.16.5) (2025-06-29)
 
 
