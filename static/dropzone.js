@@ -2,6 +2,7 @@
 function initializeDropzone() {
     const dropzoneOverlay = document.getElementById('dropzoneOverlay');
     const fileInput = document.getElementById('file-upload');
+    const form = fileInput.closest('form');
     let dropzoneActive = false;
 
     function showDropzone() {
@@ -20,7 +21,13 @@ function initializeDropzone() {
     });
     
     window.addEventListener('dragleave', function(e) {
-        if (e.target === document.body || e.pageX <= 0 || e.pageY <= 0) {
+        if (
+            e.target === document.body ||
+            e.clientX < 0 ||
+            e.clientY < 0 ||
+            e.clientX > window.innerWidth ||
+            e.clientY > window.innerHeight
+        ) {
             hideDropzone();
         }
     });
@@ -29,7 +36,20 @@ function initializeDropzone() {
         e.preventDefault();
         hideDropzone();
         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-            fileInput.files = e.dataTransfer.files;
+            // Handle dropped files by creating a new FileList-like object
+            const droppedFile = e.dataTransfer.files[0];
+            
+            // Update the file input with the dropped file
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(droppedFile);
+            fileInput.files = dataTransfer.files;
+            
+            // Update UI
+            var fileName = droppedFile.name;
+            document.getElementById('filenameDisplay').textContent = fileName;
+            document.getElementById('submit-button').disabled = false;
+            
+            // Trigger the change event to maintain compatibility
             fileInput.dispatchEvent(new Event('change'));
         }
     });
