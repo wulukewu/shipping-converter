@@ -4,7 +4,6 @@
     <title>{% block title %}Shipping Converter{% endblock %}</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='shipping-converter-tool-icon.png') }}">
-    <script src="{{ url_for('static', filename='dropzone.js') }}"></script>
 </head>
 <body>
     <div class="navbar">
@@ -31,5 +30,7 @@
             <span class="dropzone-text">拖曳檔案到此處以上傳</span>
         </div>
     </div>
+    
+    <script src="{{ url_for('static', filename='dropzone.js') }}"></script>
 </body>
 </html> 
