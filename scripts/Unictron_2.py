@@ -132,7 +132,7 @@ def organize_data(filename):
         item_country = main_sheet.cell(row=i, column=9).value
         item_desc = main_sheet.cell(row=i, column=10).value
 
-        print(f'Item Number: {item_number}, Material: {item_material}, Vendor Number: {item_vendor_number}, PO Number: {item_po_number}, Item: {item_item}, QTY: {item_qty}, Unit: {item_unit}, Amount: {item_amount}, Country: {item_country}, Desc: {item_desc}')
+        # print(f'Item Number: {item_number}, Material: {item_material}, Vendor Number: {item_vendor_number}, PO Number: {item_po_number}, Item: {item_item}, QTY: {item_qty}, Unit: {item_unit}, Amount: {item_amount}, Country: {item_country}, Desc: {item_desc}')
 
         # Get HS code based on item description
         hs_code = get_hs_code_from_desc(item_desc, hs_codes_dict)

@@ -199,3 +199,47 @@ button:hover#bug-exist {
     from { opacity: 0; }
     to { opacity: 1; }
 }
+
+/* Dropzone overlay styles */
+.dropzone-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(128, 128, 128, 0.5);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+}
+
+.dropzone-border {
+    border: 4px dashed #2196f3;
+    border-radius: 32px;
+    width: 90vw;
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255,255,255,0.7);
+    pointer-events: all;
+    transition: box-shadow 0.3s;
+    box-shadow: 0 0 32px 8px rgba(33,150,243,0.1);
+}
+
+.dropzone-text {
+    font-size: 2.5rem;
+    color: #2196f3;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    animation: dropzone-blink 1.2s infinite alternate;
+    text-shadow: 0 2px 8px #fff, 0 0 2px #2196f3;
+    user-select: none;
+}
+
+@keyframes dropzone-blink {
+    0% { opacity: 1; }
+    100% { opacity: 0.7; }
+}

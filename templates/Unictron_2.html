@@ -1,43 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Shipping Converter - 詠業2</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='shipping-converter-tool-icon.png') }}">
-    <script>
-        function enableSubmitButton() {
-            const fileInput = document.getElementById('file-upload');
-            const submitButton = document.getElementById('submit-button');
-            submitButton.disabled = !fileInput.value;
-        }
-    </script>
-</head>
-<body>
-    <div class="navbar">
-        <a href="/">
-            <img src="{{ url_for('static', filename='shipping-converter-tool-icon.png') }}" alt="Logo">
-        </a>
-        <a href="/">Home</a>
-        <a href="/Unictron">詠業</a>
-        <a href="/Unictron_2">詠業2</a>
-        <a href="/DTJ_H">DTJ 宏美</a>
-        <a href="/YONG_LAING">詠聯</a>
-        <a href="/YONG_LAING_desc">詠聯-敘述</a>
-        <a href="/VLI">威鋒</a>
-        <a href="/ASECL">日月光</a>
-    </div>
-    <section>
-        <h1>詠業2</h1>
-        <form method="POST" enctype="multipart/form-data">
-            <label for="file-upload" class="custom-file-upload">
-                上傳文件
-            </label>
-            <input id="file-upload" type="file" name="file" accept=".xls, .xlsx, .xlsm" onchange="enableSubmitButton()">
-            <button id="submit-button" type="submit" disabled>處理文件</button>
-        </form>
-        {% if message %}
-        <p>{{ message|safe }}</p>
-        {% endif %}
-    </section>
-</body>
-</html> 
+{% extends "base.html" %}
+
+{% block title %}Shipping Converter - 詠業2{% endblock %}
+
+{% block content %}
+<h1>詠業2</h1>
+<form method="POST" enctype="multipart/form-data">
+    <span id="filenameDisplay" style="display:block;margin-bottom:8px;font-weight:bold;"></span>
+    <label for="file-upload" class="custom-file-upload">
+        上傳文件
+    </label>
+    <input id="file-upload" type="file" name="file" accept=".xls, .xlsx, .xlsm" onchange="enableSubmitButton()">
+    <button id="submit-button" type="submit" disabled>處理文件</button>
+</form>
+{% if message %}
+<p>{{ message|safe }}</p>
+{% endif %}
+{% endblock %} 
