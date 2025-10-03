@@ -1,7 +1,7 @@
 services:
   shipping-converter:
     image: wulukewu/shipping-converter:latest
-    container_name: shipping-converter-prod
+    container_name: shipping-converter
     ports:
       - "5000:5000"
     environment:
