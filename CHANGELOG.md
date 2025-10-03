@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.8](https://github.com/wulukewu/shipping-converter/compare/v1.16.7...v1.16.8) (2025-10-03)
+
+
+### Bug Fixes
+
+* Configure Docker container to use GMT+8 (Asia/Taipei) timezone ([#49](https://github.com/wulukewu/shipping-converter/issues/49)) ([2b0c73a](https://github.com/wulukewu/shipping-converter/commit/2b0c73af511f6b601cbfb2e56619e9e158a99dfc))
+
 ## [1.16.7](https://github.com/wulukewu/shipping-converter/compare/v1.16.6...v1.16.7) (2025-08-03)
 
 
