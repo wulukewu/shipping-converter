@@ -396,26 +396,33 @@ def organize_data(filename):
 
                 ctn_no_list = []
                 for desc in desc_list:
-                    if 'ctn no.HM' in desc:
-                        ctn_no_list.extend(list(map(int, desc.split(' ')[-1].split('-'))))
+                    # Use regex to match 'ctn no.HM' with optional space before numbers
+                    ctn_match = re.search(r'ctn no\.HM\s*(\d+(?:-\d+)?)', desc, re.IGNORECASE)
+                    if ctn_match:
+                        number_part = ctn_match.group(1)
+                        if '-' in number_part:
+                            ctn_no_list.extend(list(map(int, number_part.split('-'))))
+                        else:
+                            ctn_no_list.append(int(number_part))
+                
                 if len(ctn_no_list) > 1:
-                    desc_list = [desc if 'ctn no.HM' not in desc else f"\n{desc}" for desc in desc_list]
+                    desc_list = [desc if not re.search(r'ctn no\.HM\s*\d+', desc, re.IGNORECASE) else f"\n{desc}" for desc in desc_list]
                     for desc_idx in range(len(desc_list)):
-                        if '\n' in desc_list[desc_idx] and 'ctn no.HM' in desc_list[desc_idx]:
+                        if '\n' in desc_list[desc_idx] and re.search(r'ctn no\.HM\s*\d+', desc_list[desc_idx], re.IGNORECASE):
                             desc_list[desc_idx] = desc_list[desc_idx].replace('\n', '')
                             break
 
                     ctn_no_num = max(ctn_no_list) - min(ctn_no_list) + 1
                     desc_list.append(f'x {ctn_no_num}CTNS')
                 else:
-                    desc_list = [desc for desc in desc_list if 'ctn no.HM' not in desc]
+                    desc_list = [desc for desc in desc_list if not re.search(r'ctn no\.HM\s*\d+', desc, re.IGNORECASE)]
 
                 desc = '\n'.join(desc_list).strip()
                 ctn_sheet.cell(row=k, column=1).value = desc
                 k += 1
                 desc_list = []
                 goods = goods_tmp
-            if 'ctn no.HM' in str(ctn):
+            if re.search(r'ctn no\.HM\s*\d+', str(ctn), re.IGNORECASE):
                 desc_list.append(ctn)
         else:
             desc_list.append(f'{ctn}-{qty}PCS')
