@@ -278,6 +278,18 @@ def organize_data(filename):
         normalized = re.sub(r'([A-Z0-9-])\s*\(', r'\1 (', str(text))
         return normalized
     
+    def normalize_ctn_format(text):
+        """
+        Normalizes the 'ctn no.HM' format by ensuring there's a space between HM and the number.
+        Example: "ctn no.HM25" becomes "ctn no.HM 25"
+        """
+        if not text:
+            return text
+        
+        # Use regex to add space between HM and number if it's missing
+        normalized = re.sub(r'(ctn no\.HM)(\d+)', r'\1 \2', str(text), flags=re.IGNORECASE)
+        return normalized
+    
     found_start_ctn = False
     found_end_ctn = False
     start_row_ctn = 0
@@ -423,7 +435,7 @@ def organize_data(filename):
                 desc_list = []
                 goods = goods_tmp
             if re.search(r'ctn no\.HM\s*\d+', str(ctn), re.IGNORECASE):
-                desc_list.append(ctn)
+                desc_list.append(normalize_ctn_format(ctn))
         else:
             desc_list.append(f'{ctn}-{qty}PCS')
 
