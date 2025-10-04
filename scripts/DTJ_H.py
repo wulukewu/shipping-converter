@@ -278,6 +278,18 @@ def organize_data(filename):
         normalized = re.sub(r'([A-Z0-9-])\s*\(', r'\1 (', str(text))
         return normalized
     
+    def normalize_ctn_format(text):
+        """
+        Normalizes the 'ctn no.HM' format by ensuring there's a space between HM and the number.
+        Example: "ctn no.HM25" becomes "ctn no.HM 25"
+        """
+        if not text:
+            return text
+        
+        # Use regex to add space between HM and number if it's missing
+        normalized = re.sub(r'(ctn no\.HM)(\d+)', r'\1 \2', str(text), flags=re.IGNORECASE)
+        return normalized
+    
     found_start_ctn = False
     found_end_ctn = False
     start_row_ctn = 0
@@ -396,27 +408,34 @@ def organize_data(filename):
 
                 ctn_no_list = []
                 for desc in desc_list:
-                    if 'ctn no.HM' in desc:
-                        ctn_no_list.extend(list(map(int, desc.split(' ')[-1].split('-'))))
+                    # Use regex to match 'ctn no.HM' with optional space before numbers
+                    ctn_match = re.search(r'ctn no\.HM\s*(\d+(?:-\d+)?)', desc, re.IGNORECASE)
+                    if ctn_match:
+                        number_part = ctn_match.group(1)
+                        if '-' in number_part:
+                            ctn_no_list.extend(list(map(int, number_part.split('-'))))
+                        else:
+                            ctn_no_list.append(int(number_part))
+                
                 if len(ctn_no_list) > 1:
-                    desc_list = [desc if 'ctn no.HM' not in desc else f"\n{desc}" for desc in desc_list]
+                    desc_list = [desc if not re.search(r'ctn no\.HM\s*\d+', desc, re.IGNORECASE) else f"\n{desc}" for desc in desc_list]
                     for desc_idx in range(len(desc_list)):
-                        if '\n' in desc_list[desc_idx] and 'ctn no.HM' in desc_list[desc_idx]:
+                        if '\n' in desc_list[desc_idx] and re.search(r'ctn no\.HM\s*\d+', desc_list[desc_idx], re.IGNORECASE):
                             desc_list[desc_idx] = desc_list[desc_idx].replace('\n', '')
                             break
 
                     ctn_no_num = max(ctn_no_list) - min(ctn_no_list) + 1
                     desc_list.append(f'x {ctn_no_num}CTNS')
                 else:
-                    desc_list = [desc for desc in desc_list if 'ctn no.HM' not in desc]
+                    desc_list = [desc for desc in desc_list if not re.search(r'ctn no\.HM\s*\d+', desc, re.IGNORECASE)]
 
                 desc = '\n'.join(desc_list).strip()
                 ctn_sheet.cell(row=k, column=1).value = desc
                 k += 1
                 desc_list = []
                 goods = goods_tmp
-            if 'ctn no.HM' in str(ctn):
-                desc_list.append(ctn)
+            if re.search(r'ctn no\.HM\s*\d+', str(ctn), re.IGNORECASE):
+                desc_list.append(normalize_ctn_format(ctn))
         else:
             desc_list.append(f'{ctn}-{qty}PCS')
 
