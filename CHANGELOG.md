@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.9](https://github.com/wulukewu/shipping-converter/compare/v1.16.8...v1.16.9) (2025-10-04)
+
+
+### Bug Fixes
+
+* format when no space between 'ctn no.HM' and the ctn number ([#53](https://github.com/wulukewu/shipping-converter/issues/53)) ([dce94f2](https://github.com/wulukewu/shipping-converter/commit/dce94f273a87ab2c01bdd53ab215350a06237619))
+
 ## [1.16.8](https://github.com/wulukewu/shipping-converter/compare/v1.16.7...v1.16.8) (2025-10-03)
 
 
