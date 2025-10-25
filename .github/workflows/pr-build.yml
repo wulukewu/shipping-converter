@@ -11,7 +11,7 @@ env:
   DOCKERHUB_IMAGE_NAME: wulukewu/shipping-converter
 
 jobs:
-  build-and-push-image:
+  build-ghcr:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -28,6 +28,32 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.PAT }}
 
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.GHCR_REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=pr-${{ github.event.pull_request.number }}
+
+      - name: Build and push Docker image to GHCR
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ env.GHCR_REGISTRY }}/${{ env.IMAGE_NAME }}:pr-${{ github.event.pull_request.number }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  build-dockerhub:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -39,25 +65,21 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: |
-            ${{ env.GHCR_REGISTRY }}/${{ env.IMAGE_NAME }}
-            ${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE_NAME }}
+          images: ${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE_NAME }}
           tags: |
             type=raw,value=pr-${{ github.event.pull_request.number }}
 
-      - name: Build and push Docker image to both registries
+      - name: Build and push Docker image to Docker Hub
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
-          tags: |
-            ${{ env.GHCR_REGISTRY }}/${{ env.IMAGE_NAME }}:pr-${{ github.event.pull_request.number }}
-            ${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE_NAME }}:pr-${{ github.event.pull_request.number }}
+          tags: ${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE_NAME }}:pr-${{ github.event.pull_request.number }}
           labels: ${{ steps.meta.outputs.labels }}
 
   comment-pr:
     runs-on: ubuntu-latest
-    needs: [build-and-push-image]
+    needs: [build-ghcr, build-dockerhub]
     if: github.event_name == 'pull_request'
     permissions:
       pull-requests: write
