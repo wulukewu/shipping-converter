@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, send_from_directory, redirect
 from werkzeug.utils import secure_filename
 from urllib.parse import unquote, quote
 import discord
+import requests
 from dotenv import load_dotenv
 from datetime import datetime
 
@@ -28,11 +29,27 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Load the Discord env from the environment
 load_dotenv()
+discord_webhook_url = os.getenv('DISCORD_WEBHOOK_URL', None)
 discord_token = os.getenv('DISCORD_TOKEN', None)
 try: discord_guild_id = int(os.environ['DISCORD_GUILD_ID'])
 except: discord_guild_id = None
 try: discord_channel_id = int(os.environ['DISCORD_CHANNEL_ID'])
 except: discord_channel_id = None
+
+# Send a message to Discord via webhook
+def dc_send_webhook(message, webhook_url):
+    """Send message to Discord using webhook URL."""
+    try:
+        payload = {
+            "content": message
+        }
+        response = requests.post(webhook_url, json=payload)
+        response.raise_for_status()
+        print(f"Message sent successfully via webhook")
+        return True
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to send message via webhook: {e}")
+        return False
 
 # Send a message to a Discord channel
 def dc_send(message, token, guild_id, channel_id):
@@ -65,6 +82,18 @@ def dc_send(message, token, guild_id, channel_id):
 
     # Run the Discord client with the provided token
     client.run(token)
+
+# Send message to Discord - prefer webhook if available, fallback to bot
+def send_discord_message(message):
+    """Send message to Discord using webhook if available, otherwise use bot."""
+    if discord_webhook_url:
+        success = dc_send_webhook(message, discord_webhook_url)
+        if success:
+            return
+    
+    # Fallback to bot if webhook fails or is not configured
+    if discord_token and discord_guild_id and discord_channel_id:
+        dc_send(message, discord_token, discord_guild_id, discord_channel_id)
 
 
 def allowed_file(filename):
@@ -129,8 +158,8 @@ def create_processed_filename(base_name, timestamp, extension='.xlsx'):
 def handle_file_processing_error(error, filename, processor_name):
     """Handle processing errors and send Discord notification if configured."""
     message = f"An error occurred during processing: {error}"
-    if discord_token and discord_guild_id and discord_channel_id:
-        dc_send(f"[{processor_name}] {filename}\n{message}", discord_token, discord_guild_id, discord_channel_id)
+    if discord_webhook_url or (discord_token and discord_guild_id and discord_channel_id):
+        send_discord_message(f"[{processor_name}] {filename}\n{message}")
     return message
 
 
