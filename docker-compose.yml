@@ -1,20 +1,39 @@
+version: "3.8"
+
 services:
-  shipping-converter:
-    build: .
-    container_name: shipping-converter-dev
+  backend:
+    build: ./backend
+    container_name: shipping-converter-backend
     ports:
-      - "5000:5000"
+      - "8000:8000"
     environment:
-      - FLASK_APP=app.py
-      - FLASK_ENV=development
-      - FLASK_DEBUG=1
-    env_file:
-      - .env
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL:-}
+      - DISCORD_TOKEN=${DISCORD_TOKEN:-}
+      - DISCORD_GUILD_ID=${DISCORD_GUILD_ID:-}
+      - DISCORD_CHANNEL_ID=${DISCORD_CHANNEL_ID:-}
     volumes:
-      - ./app.py:/app/app.py
-      - ./scripts:/app/scripts
-      - ./templates:/app/templates
-      - ./static:/app/static
       - ./uploads:/app/uploads
-    command: ["flask", "run", "--host=0.0.0.0", "--reload"]
+      - ./scripts:/app/scripts
     restart: unless-stopped
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend
+    container_name: shipping-converter-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NUXT_PUBLIC_API_BASE=http://backend:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - app-network
+
+volumes:
+  uploads:
+
+networks:
+  app-network:
+    driver: bridge

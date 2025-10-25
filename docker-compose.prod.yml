@@ -1,20 +1,39 @@
+version: "3.8"
+
 services:
-  shipping-converter:
-    image: wulukewu/shipping-converter:latest
-    container_name: shipping-converter
+  backend:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER}/shipping-converter-backend:${TAG:-latest}
+    container_name: shipping-converter-backend
     ports:
-      - "5000:5000"
+      - "8000:8000"
     environment:
-      - FLASK_APP=app.py
-      - FLASK_ENV=production
-    env_file:
-      - .env
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL:-}
+      - DISCORD_TOKEN=${DISCORD_TOKEN:-}
+      - DISCORD_GUILD_ID=${DISCORD_GUILD_ID:-}
+      - DISCORD_CHANNEL_ID=${DISCORD_CHANNEL_ID:-}
     volumes:
       - ./uploads:/app/uploads
-    restart: always
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+      - ./scripts:/app/scripts
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  frontend:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER}/shipping-converter-frontend:${TAG:-latest}
+    container_name: shipping-converter-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NUXT_PUBLIC_API_BASE=${API_BASE_URL:-http://backend:8000}
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - app-network
+
+volumes:
+  uploads:
+
+networks:
+  app-network:
+    driver: bridge
