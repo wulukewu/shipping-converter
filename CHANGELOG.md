@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.17.0](https://github.com/wulukewu/shipping-converter/compare/v1.16.9...v1.17.0) (2025-10-25)
+
+
+### Features
+
+* send to discord webhook ([#55](https://github.com/wulukewu/shipping-converter/issues/55)) ([59b914d](https://github.com/wulukewu/shipping-converter/commit/59b914dd43a2d4e5f5c14dbc93599d85953a61be))
+
 ## [1.16.9](https://github.com/wulukewu/shipping-converter/compare/v1.16.8...v1.16.9) (2025-10-04)
 
 
