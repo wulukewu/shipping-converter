@@ -73,13 +73,33 @@ services:
       - "5000:5000"
     environment:
       - FLASK_APP=app.py
+      # Discord Webhook (recommended)
+      - DISCORD_WEBHOOK_URL=your_discord_webhook_url
+      # Discord Bot (fallback - only needed if webhook not used)
+      # - DISCORD_TOKEN=your_discord_token
+      # - DISCORD_GUILD_ID=your_discord_guild_id
+      # - DISCORD_CHANNEL_ID=your_discord_channel_id
     volumes:
       - ./uploads:/app/uploads
 ```
 
 ### Discord Integration
 
-To enable Discord notifications, create a `.env` file with the following content:
+ShippingConverter supports Discord notifications for processing errors through two methods:
+
+#### Method 1: Discord Webhook (Recommended)
+
+To use Discord webhooks, create a `.env` file with the following content:
+
+```env
+DISCORD_WEBHOOK_URL=your_discord_webhook_url
+```
+
+Replace `your_discord_webhook_url` with your actual Discord webhook URL. This method is simpler and doesn't require a Discord bot.
+
+#### Method 2: Discord Bot (Fallback)
+
+If no webhook URL is provided, the application will fall back to using a Discord bot. Create a `.env` file with the following content:
 
 ```env
 DISCORD_TOKEN=your_discord_token
@@ -88,6 +108,12 @@ DISCORD_CHANNEL_ID=your_discord_channel_id
 ```
 
 Replace `your_discord_token`, `your_discord_guild_id`, and `your_discord_channel_id` with your actual Discord bot token, guild ID, and channel ID.
+
+#### Priority
+
+The application prioritizes Discord methods in the following order:
+1. **Webhook** (if `DISCORD_WEBHOOK_URL` is set)
+2. **Bot** (if webhook fails or is not configured, and bot credentials are available)
 
 ### GitHub Actions
 
