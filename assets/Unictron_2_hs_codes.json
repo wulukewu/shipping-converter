@@ -12,11 +12,15 @@
     "description": "IC"
   },
   "GDT": {
-    "hs_code": "8535.40.20.00-6",
+    "hs_code": "8541.30.00.00-4",
     "description": "放電管"
   },
   "FUSE": {
     "hs_code": "8536.10.00.00-5",
+    "description": "NA"
+  },
+  "PTC": {
+    "hs_code": "8533.21.00.90-6",
     "description": "NA"
   }
 } 
