@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.17.1](https://github.com/wulukewu/shipping-converter/compare/v1.17.0...v1.17.1) (2025-11-14)
+
+
+### Bug Fixes
+
+* update unictron2 hs codes ([#57](https://github.com/wulukewu/shipping-converter/issues/57)) ([2cd64b5](https://github.com/wulukewu/shipping-converter/commit/2cd64b548d6bff0a446892ceb74d6eba7e052945))
+
 ## [1.17.0](https://github.com/wulukewu/shipping-converter/compare/v1.16.9...v1.17.0) (2025-10-25)
 
 
