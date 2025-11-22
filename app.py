@@ -16,11 +16,13 @@ import scripts.YONG_LAING as YONG_LAING
 import scripts.YONG_LAING_desc as YONG_LAING_desc
 import scripts.VLI as VLI
 import scripts.ASECL as ASECL
+import scripts.Everlight as Everlight
+
 app = Flask(__name__)
 
 # Configure upload folder and allowed file types
 UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'xls', 'xlsx', 'xlsm'}
+ALLOWED_EXTENSIONS = {'xls', 'xlsx', 'xlsm', 'pdf'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Limit file size to 16MB
 
@@ -183,7 +185,17 @@ def process_upload_request(request, processor_module, processor_name, template_n
             filepath, timestamped_filename = save_uploaded_file(file, filename, timestamp)
 
             # Process the file
-            if processor_name == 'YONG_LAING_desc':
+            if processor_name == 'Everlight':
+                # PDF processing for Everlight
+                processor_module.organize_data(filepath)
+
+                base_name, _ = os.path.splitext(filename)
+                processed_filename_uploads = create_processed_filename(base_name, timestamp, output_extension)
+                processed_filename_download = f"{base_name}_processed{output_extension}"
+                
+                processed_filepath = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename_uploads)
+                os.rename(os.path.join(app.config['UPLOAD_FOLDER'], "Organized_Data.xlsx"), processed_filepath)
+            elif processor_name == 'YONG_LAING_desc':
                 # Special handling for YONG_LAING_desc (outputs .txt)
                 txt_filename = os.path.splitext(filepath)[0] + '.txt'
                 processor_module.read_xlsx_and_output_txt(filepath, txt_filename)
@@ -260,6 +272,12 @@ def upload_file_vli():
 def upload_file_asecl():
     """Handles file upload and processing for ASECL."""
     return process_upload_request(request, ASECL, 'ASECL', 'ASECL.html')
+
+
+@app.route('/Everlight', methods=['GET', 'POST'])
+def upload_file_everlight():
+    """Handles file upload and processing for Everlight."""
+    return process_upload_request(request, Everlight, 'Everlight', 'Everlight.html')
 
 
 @app.route(f'/{UPLOAD_FOLDER}/<name>')
