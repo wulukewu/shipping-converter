@@ -9,7 +9,7 @@ ADD . /app
 
 # Install antiword, tzdata and any needed packages specified in requirements.txt
 RUN apt-get update && \
-    apt-get install -y antiword tzdata && \
+    apt-get install -y antiword tzdata default-jre-headless && \
     pip install --no-cache-dir -r requirements.txt
 
 # Set timezone to GMT+8 (Asia/Taipei)

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Shipping Converter - 億光{% endblock %}
+
+{% block content %}
+<h1>億光</h1>
+<form method="POST" enctype="multipart/form-data">
+    <span id="filenameDisplay" style="display:block;margin-bottom:8px;font-weight:bold;"></span>
+    <label for="file-upload" class="custom-file-upload">
+        上傳文件
+    </label>
+    <input id="file-upload" type="file" name="file" accept=".pdf" onchange="enableSubmitButton()">
+    <button id="submit-button" type="submit" disabled>處理文件</button>
+</form>
+{% if message %}
+<p>{{ message|safe }}</p>
+{% endif %}
+{% endblock %}
