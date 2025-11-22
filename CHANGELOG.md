@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.18.0](https://github.com/wulukewu/shipping-converter/compare/v1.17.1...v1.18.0) (2025-11-22)
+
+
+### Features
+
+* create Everlight pdf process script ([#59](https://github.com/wulukewu/shipping-converter/issues/59)) ([1fe5ecf](https://github.com/wulukewu/shipping-converter/commit/1fe5ecff8e32f762e8e8032a88d12508a8d707f8))
+
 ## [1.17.1](https://github.com/wulukewu/shipping-converter/compare/v1.17.0...v1.17.1) (2025-11-14)
 
 
