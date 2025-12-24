@@ -10,11 +10,29 @@ def organize_data(filepath):
     # Check if any tables were found
     if tables:
         print(f"Found {len(tables)} tables.")
-        # For simplicity, we process only the first table found.
+        
+        # Start with the first table
         df = tables[0]
-
         # Clean column names
         df.columns = df.columns.str.replace('\r', '', regex=False)
+
+        # Iterate through remaining tables and concatenate
+        for i in range(1, len(tables)):
+            next_df = tables[i]
+            # Clean column names for consistency
+            next_df.columns = next_df.columns.str.replace('\r', '', regex=False)
+
+            if list(next_df.columns) == list(df.columns):
+                # Columns match, simple concat
+                df = pd.concat([df, next_df], ignore_index=True)
+            elif len(next_df.columns) == len(df.columns):
+                # Columns mismatch but length same -> assume header is data
+                # Convert the header to a row
+                header_row = pd.DataFrame([list(next_df.columns)], columns=df.columns)
+                next_df.columns = df.columns
+                df = pd.concat([df, header_row, next_df], ignore_index=True)
+            else:
+                print(f"Warning: Table {i+1} ignored due to column mismatch.")
         
         # remove the , in the QTY(EA) column
         df['QTY(EA)'] = df['QTY(EA)'].str.replace(',', '', regex=False)
